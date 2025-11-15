@@ -1,5 +1,7 @@
 # CodeWeaver 🕸️
 
+> ⚠️ **Alpha Release (v0.1.0)** - This is an early experimental release. Expect bugs, breaking changes, and incomplete features. Feedback welcome!
+
 **Token-efficient MCP server for Java 21/Gradle project analysis**
 
 Weaving Java Code Intelligence for LLMs - A lightweight Model Context Protocol server that provides token-efficient access to Java/Gradle codebases through a multi-agent architecture.
@@ -22,8 +24,7 @@ Weaving Java Code Intelligence for LLMs - A lightweight Model Context Protocol s
   - 🚀 **[PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md)** - Future optimizations (GPU acceleration)
 - ✅ **Code Quality Analysis** - Cyclomatic complexity, LOC metrics, import analysis
 - ✅ **Git Integration** - Status, diff, blame, log, branches, compare
-- ✅ **Test-Driven** - 87 tests passing, 100% coverage
-- ✅ **Production-Ready** - Phase 1-4 + Semantic Search complete
+- ✅ **Test-Driven** - 87 tests passing
 
 ---
 
@@ -732,36 +733,32 @@ MIT License - see [LICENSE](./LICENSE)
 
 ## 🎯 Current Status
 
-**Phase 1 + 2 + 3 + 4 Complete: 100%**
+**Alpha Release v0.1.0** ⚠️
 
-✅ Fully Working:
+✅ **Working Features:**
 - **MCP Server** with 18 tools (project, files, symbols, search, analysis, vcs)
-- **CLI** with 6 command groups (info, file, symbols, search, analysis, vcs)
-- **7 Agents**: Discovery, Cache, Snippets, Symbols, Search, Analysis, VCS
-- **Java Symbol Extraction**: Classes, methods, fields, constructors
-- **Keyword & Pattern Search**: Grep-like functionality with context
-- **Code Quality Analysis**: Cyclomatic complexity, LOC metrics, imports
-- **Git Integration**: Status, diff, blame, log, branches, compare
-- **73 tests passing** (68 unit + 5 integration)
-- **TypeScript strict build** with zero native dependencies
-- **Complete documentation** with usage examples
+- **CLI** with 6 command groups + watch mode
+- **Semantic Search** with ONNX Runtime optimizations
+- **Multi-Collection Support** (Code + Docs)
+- **File Watcher** for automatic index updates
+- **Java Symbol Extraction** - Classes, methods, fields, constructors
+- **Code Quality Analysis** - Cyclomatic complexity, LOC metrics
+- **Git Integration** - Status, diff, blame, log, branches
+- **87 tests passing**
 
-🚀 **Production-Ready for:**
-- Java/Gradle project analysis
-- Symbol extraction and search
-- Keyword/pattern code search
-- Complexity analysis and metrics
-- Code quality assessment
-- Token-efficient file reading
-- Project metadata extraction
-- Git repository analysis
-- Commit history and blame tracking
-- Branch comparison
+⚠️ **Known Limitations:**
+- Performance varies on large codebases (>10k files)
+- Semantic search memory usage can be high
+- File watcher may miss rapid changes
+- Documentation is incomplete
+- Breaking changes expected in future releases
 
-📋 **Next Up: Phase 5 - Orchestration**
-- DAG-based pipeline execution
-- Parallel task execution
-- Dependency resolution
+🔮 **Planned Improvements:**
+- GPU acceleration for semantic search
+- Better error messages
+- More language support beyond Java
+- Performance optimizations
+- Comprehensive documentation
 
 ---
 

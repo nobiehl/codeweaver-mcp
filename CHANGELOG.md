@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.0] - 2025-01-15
+## [0.1.0] - 2025-01-15
+
+**Initial Public Release** 🎉
+
+CodeWeaver is an experimental MCP server for code analysis. This is an early alpha release to gather feedback and iterate on features.
 
 ### Added
 - 🚀 **ONNX Runtime Optimizations** - Multi-threading + SIMD for 3x faster embeddings
@@ -46,111 +50,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ONNX Runtime integration tested
 - Multi-collection functionality tested
 
-## [1.0.0] - 2025-01-14
-
-### Added
-- 🔍 **Semantic Search** - Find code by meaning/intent using LanceDB + Transformers
-  - Vector embeddings with Xenova/all-MiniLM-L6-v2
-  - LanceDB for efficient vector storage and search
-  - Batch processing with 16x parallelization
-  - Configurable similarity thresholds
-- **Semantic Index Agent** - Core semantic search engine
-  - File chunking with configurable sizes
-  - Context-aware code chunks
-  - Progress tracking during indexing
-  - Statistics and index management
-- **MCP Tool: search.semantic** - Semantic search via MCP
-- **CLI Command: search semantic** - Semantic search via CLI
-  - `--index` flag for building index
-  - `--limit` for result count
-  - Color-coded similarity scores
-
-### Performance
-- Batch processing: 30 minutes for 10k files (was 8 hours)
-- Automatic batch size based on CPU cores
-- Progress display with ETA
-
-### Documentation
-- SEMANTIC_SEARCH.md - Complete semantic search guide
-- PERFORMANCE_OPTIMIZATION.md - Optimization roadmap
-
-## [0.4.0] - 2025-01-13
-
-### Added
-- **VCS Agent** - Git operations
-  - Repository status (modified, added, deleted, untracked files)
-  - Diff generation (file-level and project-level)
-  - Blame information (line-by-line authorship)
-  - Commit history with filtering
-  - Branch management (list, compare)
-- **MCP Tools** - 6 new VCS tools
-  - `vcs.status`, `vcs.diff`, `vcs.blame`, `vcs.log`, `vcs.branches`, `vcs.compare`
-- **CLI Commands** - VCS command group
-- 11 new tests for VCS functionality
-
-### Tests
-- Total: 73 tests passing (68 unit + 5 integration)
-
-## [0.3.0] - 2025-01-12
-
-### Added
-- **Analysis Agent** - Code quality and complexity metrics
-  - Cyclomatic complexity calculation
-  - Lines of code metrics (LOC, SLOC, comments, blank lines)
-  - Import analysis
-  - Method call detection
-  - Project-wide statistics
-- **MCP Tools** - 2 new analysis tools
-  - `analysis.file` - Analyze single file
-  - `analysis.project` - Analyze entire project
-- **CLI Commands** - Analysis command group
-- 11 new tests for analysis functionality
-
-### Tests
-- Total: 62 tests passing (57 unit + 5 integration)
-
-## [0.2.0] - 2025-01-11
-
-### Added
-- **Symbols Agent** - Java symbol extraction with java-parser
-  - Extract classes, methods, fields, constructors
-  - Modifiers, return types, parameters
-  - Line numbers and source locations
-- **Search Agent** - Keyword and pattern search
-  - Keyword search with case-insensitive option
-  - Context lines (before/after matches)
-  - File extension filtering
-  - Glob pattern file search
-- **Symbol Storage** - JSON Lines persistence
-- **MCP Tools** - 6 new tools
-  - `symbols.index`, `symbols.find`, `symbols.findByKind`, `symbols.get`
-  - `search.keyword`, `search.files`
-- **CLI Commands** - Symbols and search command groups
-- 19 new tests (symbols + search)
-
-### Tests
-- Total: 51 tests passing (46 unit + 5 integration)
-
-## [0.1.0] - 2025-01-10
-
-### Added
-- **Initial Release** - Foundation complete
-- **Discovery Agent** - Gradle metadata extraction
-- **Cache Agent** - Content-addressable caching with SHA-256
-- **Snippets Agent** - Token-efficient file reading
-- **MCP Server** - stdio transport with 4 tools
-  - `project.meta`, `file.read`, `file.readRange`, `file.readWithNumbers`
-- **CLI Interface** - Info and file command groups
-- **Auto-detection** - stdio = MCP mode, TTY = CLI mode
-- **Progress Tracking** - JSON Lines format
-- **Test Infrastructure** - Vitest setup
-- 32 tests passing (27 unit + 5 integration)
+### Core Features
+- **MCP Server** - stdio transport with 18 tools
+  - Project metadata, file operations, symbol extraction
+  - Keyword & semantic search
+  - Code quality analysis
+  - Git operations
+- **CLI Interface** - 6 command groups (info, file, symbols, search, analysis, vcs, watch)
+- **Semantic Search** - Find code by meaning/intent
+  - LanceDB vector search with Xenova/all-MiniLM-L6-v2
+  - ONNX Runtime optimizations (multi-threading + SIMD)
+  - Multi-collection support (Code + Docs)
+  - File watcher with incremental updates
+- **Java/Gradle Analysis** - Symbol extraction, complexity metrics
+- **Git Integration** - Status, diff, blame, log, branches
+- **Token-Efficient** - Smart file reading with token limits
 
 ### Infrastructure
-- TypeScript strict mode
-- ESM modules
-- Zero native dependencies
+- TypeScript strict mode, ESM modules
+- Zero native dependencies (pure Node.js)
+- 87 tests passing
 - Node.js 20+ required
+
+### Known Limitations
+⚠️ **This is an alpha release. Expect bugs and breaking changes.**
+- Performance may vary on large codebases
+- Some features are experimental
+- Documentation is work in progress
 
 ---
 
@@ -162,10 +88,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 📖 Documentation
 - ✅ Tests
 
-[Unreleased]: https://github.com/nobiehl/codeweaver-mcp/compare/v1.1.0...HEAD
-[1.1.0]: https://github.com/nobiehl/codeweaver-mcp/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/nobiehl/codeweaver-mcp/compare/v0.4.0...v1.0.0
-[0.4.0]: https://github.com/nobiehl/codeweaver-mcp/compare/v0.3.0...v0.4.0
-[0.3.0]: https://github.com/nobiehl/codeweaver-mcp/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/nobiehl/codeweaver-mcp/compare/v0.1.0...v0.2.0
+[Unreleased]: https://github.com/nobiehl/codeweaver-mcp/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/nobiehl/codeweaver-mcp/releases/tag/v0.1.0
