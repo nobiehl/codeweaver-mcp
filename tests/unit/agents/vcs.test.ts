@@ -142,7 +142,9 @@ describe('VCSAgent', () => {
   });
 
   it('should handle non-git directory gracefully', async () => {
-    const nonGitDir = `.test-non-git-${Date.now()}`;
+    // Use OS temp directory to ensure we're outside any Git repository
+    const os = await import('os');
+    const nonGitDir = path.join(os.tmpdir(), `.test-non-git-${Date.now()}`);
     await fs.mkdir(nonGitDir, { recursive: true });
 
     try {
