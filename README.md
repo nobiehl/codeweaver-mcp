@@ -47,6 +47,16 @@ npm run dev -- analysis project
 npm run dev -- --mcp
 ```
 
+### 📖 New to CodeWeaver?
+
+**👉 [DEVELOPER_WORKFLOW.md](./DEVELOPER_WORKFLOW.md)** - Complete end-to-end guide showing all 18 MCP tools in action!
+
+Learn by example:
+- Real-world scenario (User Management Microservice)
+- 6 development phases from onboarding to deployment
+- Typical Claude Code conversations
+- Best practices and power user tips
+
 ---
 
 ## 📦 Current Features (Phase 1 + 2 + 3 + 4 Complete)
@@ -713,6 +723,7 @@ MIT License - see [LICENSE](./LICENSE)
 
 ### 🗺️ Schnellzugriff
 
+- **[DEVELOPER_WORKFLOW.md](./DEVELOPER_WORKFLOW.md)** - 🚀 **START HERE!** Complete Developer Workflow (All 18 MCP tools in action)
 - **[SEMANTIC_SEARCH.md](./SEMANTIC_SEARCH.md)** - 🔥 **NEU!** Semantic Search Guide mit Workflows, Best Practices & Integration
 - **[MULTI_COLLECTION_GUIDE.md](./MULTI_COLLECTION_GUIDE.md)** - 🎯 **NEU!** Multi-Collection Guide (Code + Docs indexieren & suchen)
 - **[FILE_WATCHER_GUIDE.md](./FILE_WATCHER_GUIDE.md)** - 🔍 **NEU!** File Watcher Guide (Automatische Incremental Updates)
