@@ -102,6 +102,33 @@ describe('ModernJavaFeatures Support', () => {
     expect(annotatedMethods.length).toBeGreaterThan(0);
   });
 
+  it('should extract field annotations', async () => {
+    const symbols = await agent.parseFile(testFile);
+
+    // Find all fields
+    const fields = symbols.filter(s => s.kind === 'field');
+    console.log(`\n=== ALL FIELDS (${fields.length} total) ===`);
+    fields.slice(0, 5).forEach(f => {
+      const annStr = f.annotations && f.annotations.length > 0
+        ? f.annotations.map(a => `@${a.type}`).join(', ')
+        : 'none';
+      console.log(`  - ${f.name}: [${annStr}]`);
+    });
+
+    const annotatedFields = symbols.filter(s =>
+      s.kind === 'field' && s.annotations && s.annotations.length > 0
+    );
+
+    console.log('\n=== ANNOTATED FIELDS ===');
+    annotatedFields.forEach(f => {
+      console.log(`  - ${f.qualifiedName}`);
+      console.log(`    Annotations: ${f.annotations!.map(a => `@${a.type}`).join(', ')}`);
+    });
+
+    // Should find dataSource field with @Autowired, @Qualifier
+    expect(annotatedFields.length).toBeGreaterThan(0);
+  });
+
   it('should extract nested classes', async () => {
     const symbols = await agent.parseFile(testFile);
     const nestedClasses = symbols.filter(s =>

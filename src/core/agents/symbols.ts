@@ -396,8 +396,9 @@ export class SymbolsAgent {
 
     try {
       const fieldDecl = decl.children?.classMemberDeclaration?.[0]?.children?.fieldDeclaration?.[0];
-      const modifiers = this.extractModifiers(decl.children?.classModifier);
-      const annotations = this.extractAnnotations(decl.children?.classModifier);
+      // Extract modifiers and annotations from fieldModifier (not classModifier!)
+      const modifiers = this.extractModifiers(fieldDecl?.children?.fieldModifier);
+      const annotations = this.extractAnnotations(fieldDecl?.children?.fieldModifier);
       const variables = fieldDecl?.children?.variableDeclaratorList?.[0]?.children?.variableDeclarator || [];
 
       for (const variable of variables) {
