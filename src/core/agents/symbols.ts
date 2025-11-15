@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { parse } from 'java-parser';
-import type { SymbolDefinition, SymbolKind, Modifier, Annotation } from '../../types/symbols.js';
+import type { SymbolDefinition, SymbolKind, Modifier, Annotation, Parameter } from '../../types/symbols.js';
 
 /**
  * SymbolsAgent - Java Symbol Extraction
@@ -130,8 +130,50 @@ export class SymbolsAgent {
               symbols.push(...constantSymbols);
             }
           }
-        } else {
-          // Normal class (not enum)
+        }
+        // Check if it's a record (Java 14+)
+        else if (classDecl.children?.recordDeclaration) {
+          const recordDecl = classDecl.children.recordDeclaration[0];
+          const recordName = recordDecl.children?.typeIdentifier?.[0]?.children?.Identifier?.[0]?.image;
+
+          if (recordName) {
+            const qualifiedName = packageName ? `${packageName}.${recordName}` : recordName;
+            const modifiers = this.extractModifiers(typeDecl.children?.classModifier);
+            const annotations = this.extractAnnotations(typeDecl.children?.classModifier);
+
+            // Extract record parameters from recordHeader
+            const recordHeader = recordDecl.children?.recordHeader?.[0];
+            const components = this.extractRecordComponents(recordHeader);
+
+            symbols.push({
+              id: qualifiedName,
+              name: recordName,
+              qualifiedName,
+              kind: 'record' as SymbolKind,
+              location: {
+                path: filePath,
+                startLine: this.extractLineNumber(recordDecl),
+                startColumn: 0,
+                endLine: this.extractLineNumber(recordDecl),
+                endColumn: 0
+              },
+              modifiers: modifiers as Modifier[],
+              signature: `${modifiers.join(' ')} record ${recordName}(${components.map(c => c.name).join(', ')})`,
+              annotations,
+              visibility: this.getVisibility(modifiers),
+              parameters: components
+            });
+
+            // Extract record body members (methods, constructors)
+            const recordBody = recordDecl.children?.recordBody?.[0];
+            if (recordBody) {
+              const memberSymbols = this.extractRecordMembers(recordBody, qualifiedName, filePath);
+              symbols.push(...memberSymbols);
+            }
+          }
+        }
+        // Normal class (not enum or record)
+        else {
           const className = classDecl.children?.normalClassDeclaration?.[0]?.children?.typeIdentifier?.[0]?.children?.Identifier?.[0]?.image;
 
           if (className) {
@@ -306,6 +348,47 @@ export class SymbolsAgent {
           if (enumBody) {
             const constantSymbols = this.extractEnumConstants(enumBody, qualifiedName, filePath);
             symbols.push(...constantSymbols);
+          }
+        }
+      }
+      // Check if it's a nested record
+      else if (classDecl.children?.recordDeclaration) {
+        const recordDecl = classDecl.children.recordDeclaration[0];
+        const recordName = recordDecl.children?.typeIdentifier?.[0]?.children?.Identifier?.[0]?.image;
+
+        if (recordName) {
+          const qualifiedName = `${parentClassName}$${recordName}`;
+          const annotations = this.extractAnnotations(classModifiers);
+          const visibility = this.getVisibility(modifiers);
+
+          // Extract record parameters from recordHeader
+          const recordHeader = recordDecl.children?.recordHeader?.[0];
+          const components = this.extractRecordComponents(recordHeader);
+
+          symbols.push({
+            id: qualifiedName,
+            name: recordName,
+            qualifiedName,
+            kind: 'record' as SymbolKind,
+            location: {
+              path: filePath,
+              startLine: this.extractLineNumber(recordDecl),
+              startColumn: 0,
+              endLine: this.extractLineNumber(recordDecl),
+              endColumn: 0
+            },
+            modifiers: modifiers as Modifier[],
+            signature: `${modifiers.join(' ')} record ${recordName}(${components.map(c => c.name).join(', ')})`,
+            annotations,
+            visibility,
+            parameters: components
+          });
+
+          // Extract record body members (methods, constructors)
+          const recordBody = recordDecl.children?.recordBody?.[0];
+          if (recordBody) {
+            const memberSymbols = this.extractRecordMembers(recordBody, qualifiedName, filePath);
+            symbols.push(...memberSymbols);
           }
         }
       }
@@ -652,6 +735,108 @@ export class SymbolsAgent {
       }
     } catch (error) {
       console.error('Error extracting interface members:', error);
+    }
+
+    return symbols;
+  }
+
+  /**
+   * Extract record components (parameters) from recordHeader
+   */
+  private extractRecordComponents(recordHeader: any): Parameter[] {
+    const components: Parameter[] = [];
+
+    if (!recordHeader) return components;
+
+    try {
+      const componentList = recordHeader.children?.recordComponentList?.[0];
+      const recordComponents = componentList?.children?.recordComponent || [];
+
+      for (const component of recordComponents) {
+        const componentName = component.children?.Identifier?.[0]?.image;
+
+        if (componentName) {
+          // Extract annotations from recordComponentModifier
+          const annotations = this.extractAnnotations(component.children?.recordComponentModifier);
+
+          // Extract type information (simplified for now)
+          const unannType = component.children?.unannType?.[0];
+          const typeName = unannType?.children?.unannPrimitiveType?.[0]?.children?.numericType?.[0]?.name ||
+                          unannType?.children?.unannReferenceType?.[0]?.children?.unannClassOrInterfaceType?.[0]
+                            ?.children?.unannClassType?.[0]?.children?.typeIdentifier?.[0]?.children?.Identifier?.[0]?.image ||
+                          'Object';
+
+          components.push({
+            name: componentName,
+            type: { name: typeName },
+            annotations
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error extracting record components:', error);
+    }
+
+    return components;
+  }
+
+  /**
+   * Extract members from record body (methods, constructors)
+   */
+  private extractRecordMembers(recordBody: any, recordName: string, filePath: string): SymbolDefinition[] {
+    const symbols: SymbolDefinition[] = [];
+
+    if (!recordBody) return symbols;
+
+    try {
+      const declarations = recordBody.children?.recordBodyDeclaration || [];
+
+      for (const decl of declarations) {
+        // Check for class body declaration (methods, constructors, fields)
+        if (decl.children?.classBodyDeclaration) {
+          const bodyDecl = decl.children.classBodyDeclaration[0];
+
+          // Method declaration
+          if (bodyDecl.children?.classMemberDeclaration?.[0]?.children?.methodDeclaration) {
+            const methodSymbol = this.extractMethod(bodyDecl, recordName, filePath);
+            if (methodSymbol) symbols.push(methodSymbol);
+          }
+
+          // Constructor declaration (compact constructor)
+          if (bodyDecl.children?.constructorDeclaration) {
+            const constructorSymbol = this.extractConstructor(bodyDecl, recordName, filePath);
+            if (constructorSymbol) symbols.push(constructorSymbol);
+          }
+        }
+
+        // Compact constructor (special for records)
+        if (decl.children?.compactConstructorDeclaration) {
+          const compactConstructor = decl.children.compactConstructorDeclaration[0];
+          const modifiers = this.extractModifiers(compactConstructor?.children?.constructorModifier);
+          const annotations = this.extractAnnotations(compactConstructor?.children?.constructorModifier);
+
+          symbols.push({
+            id: `${recordName}#<init>`,
+            name: recordName.split('.').pop() || recordName,
+            qualifiedName: `${recordName}#<init>`,
+            kind: 'constructor' as SymbolKind,
+            location: {
+              path: filePath,
+              startLine: this.extractLineNumber(compactConstructor),
+              startColumn: 0,
+              endLine: this.extractLineNumber(compactConstructor),
+              endColumn: 0
+            },
+            modifiers: modifiers as Modifier[],
+            signature: `${modifiers.join(' ')} ${recordName}()`,
+            annotations,
+            parameters: [],
+            visibility: this.getVisibility(modifiers)
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error extracting record members:', error);
     }
 
     return symbols;

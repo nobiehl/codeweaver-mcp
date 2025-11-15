@@ -28,7 +28,9 @@ public class ModernJavaFeatures {
     }
 
     // Nested record
-    public record Address(String street, String city, String zipCode) {}
+    public record Address(String street, String city, String zipCode) {
+        // Empty body
+    }
 
     // === 2. SEALED CLASSES (Java 17+) ===
     public sealed interface Shape permits Circle, Rectangle, Triangle {}

@@ -42,10 +42,15 @@ describe('ModernJavaFeatures Support', () => {
     const records = symbols.filter(s => s.kind === 'record');
 
     console.log('\n=== RECORDS ===');
-    records.forEach(r => console.log(`  - ${r.qualifiedName}`));
+    records.forEach(r => {
+      console.log(`  - ${r.qualifiedName}`);
+      if (r.parameters && r.parameters.length > 0) {
+        console.log(`    Parameters: ${r.parameters.map(p => `${p.name}: ${p.type.name}`).join(', ')}`);
+      }
+    });
 
     // Should find: UserDTO, Address
-    expect(records.length).toBeGreaterThanOrEqual(0); // Will be 0 if not supported
+    expect(records.length).toBeGreaterThan(0);
   });
 
   it('should extract enum with constants and methods', async () => {
