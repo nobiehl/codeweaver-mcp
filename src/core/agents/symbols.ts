@@ -237,9 +237,146 @@ export class SymbolsAgent {
           const constructorSymbol = this.extractConstructor(decl, className, filePath);
           if (constructorSymbol) symbols.push(constructorSymbol);
         }
+
+        // Nested type declarations (enum, class, interface)
+        if (decl.children?.classMemberDeclaration?.[0]?.children?.classDeclaration) {
+          const nestedTypeSymbols = this.extractNestedTypeDeclaration(
+            decl.children.classMemberDeclaration[0].children.classDeclaration[0],
+            decl.children?.classModifier,
+            className,
+            filePath
+          );
+          symbols.push(...nestedTypeSymbols);
+        }
       }
     } catch (error) {
       console.error('Error extracting class members:', error);
+    }
+
+    return symbols;
+  }
+
+  /**
+   * Extract nested type declarations (enum, class, interface) within a class
+   */
+  private extractNestedTypeDeclaration(
+    classDecl: any,
+    classModifiers: any[] | undefined,
+    parentClassName: string,
+    filePath: string
+  ): SymbolDefinition[] {
+    const symbols: SymbolDefinition[] = [];
+
+    try {
+      const modifiers = this.extractModifiers(classModifiers);
+
+      // Check if it's a nested enum
+      if (classDecl.children?.enumDeclaration) {
+        const enumDecl = classDecl.children.enumDeclaration[0];
+        const enumName = enumDecl.children?.typeIdentifier?.[0]?.children?.Identifier?.[0]?.image;
+
+        if (enumName) {
+          const qualifiedName = `${parentClassName}$${enumName}`;
+          const visibility = this.getVisibility(modifiers);
+
+          symbols.push({
+            id: qualifiedName,
+            name: enumName,
+            qualifiedName,
+            kind: 'enum' as SymbolKind,
+            location: {
+              path: filePath,
+              startLine: this.extractLineNumber(enumDecl),
+              startColumn: 0,
+              endLine: this.extractLineNumber(enumDecl),
+              endColumn: 0
+            },
+            modifiers: modifiers as Modifier[],
+            signature: `${modifiers.join(' ')} enum ${enumName}`,
+            annotations: [],
+            visibility
+          });
+
+          // Extract enum constants
+          const enumBody = enumDecl.children?.enumBody?.[0];
+          if (enumBody) {
+            const constantSymbols = this.extractEnumConstants(enumBody, qualifiedName, filePath);
+            symbols.push(...constantSymbols);
+          }
+        }
+      }
+      // Check if it's a nested class
+      else if (classDecl.children?.normalClassDeclaration) {
+        const normalClassDecl = classDecl.children.normalClassDeclaration[0];
+        const className = normalClassDecl.children?.typeIdentifier?.[0]?.children?.Identifier?.[0]?.image;
+
+        if (className) {
+          const qualifiedName = `${parentClassName}$${className}`;
+          const visibility = this.getVisibility(modifiers);
+
+          symbols.push({
+            id: qualifiedName,
+            name: className,
+            qualifiedName,
+            kind: 'class' as SymbolKind,
+            location: {
+              path: filePath,
+              startLine: this.extractLineNumber(normalClassDecl),
+              startColumn: 0,
+              endLine: this.extractLineNumber(normalClassDecl),
+              endColumn: 0
+            },
+            modifiers: modifiers as Modifier[],
+            signature: `${modifiers.join(' ')} class ${className}`,
+            annotations: [],
+            visibility
+          });
+
+          // Extract nested class members recursively
+          const classBody = normalClassDecl.children?.classBody?.[0];
+          if (classBody) {
+            const memberSymbols = this.extractClassMembers(classBody, qualifiedName, filePath);
+            symbols.push(...memberSymbols);
+          }
+        }
+      }
+      // Check if it's a nested interface
+      else if (classDecl.children?.normalInterfaceDeclaration) {
+        const interfaceDecl = classDecl.children.normalInterfaceDeclaration[0];
+        const interfaceName = interfaceDecl.children?.typeIdentifier?.[0]?.children?.Identifier?.[0]?.image;
+
+        if (interfaceName) {
+          const qualifiedName = `${parentClassName}$${interfaceName}`;
+          const visibility = this.getVisibility(modifiers);
+
+          symbols.push({
+            id: qualifiedName,
+            name: interfaceName,
+            qualifiedName,
+            kind: 'interface' as SymbolKind,
+            location: {
+              path: filePath,
+              startLine: this.extractLineNumber(interfaceDecl),
+              startColumn: 0,
+              endLine: this.extractLineNumber(interfaceDecl),
+              endColumn: 0
+            },
+            modifiers: modifiers as Modifier[],
+            signature: `${modifiers.join(' ')} interface ${interfaceName}`,
+            annotations: [],
+            visibility
+          });
+
+          // Extract interface members
+          const interfaceBody = interfaceDecl.children?.interfaceBody?.[0];
+          if (interfaceBody) {
+            const memberSymbols = this.extractInterfaceMembers(interfaceBody, qualifiedName, filePath);
+            symbols.push(...memberSymbols);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error extracting nested type declaration:', error);
     }
 
     return symbols;
