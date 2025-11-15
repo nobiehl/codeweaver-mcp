@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { parse } from 'java-parser';
-import type { SymbolDefinition, SymbolKind, Modifier } from '../../types/symbols.js';
+import type { SymbolDefinition, SymbolKind, Modifier, Annotation } from '../../types/symbols.js';
 
 /**
  * SymbolsAgent - Java Symbol Extraction
@@ -103,6 +103,7 @@ export class SymbolsAgent {
           if (enumName) {
             const qualifiedName = packageName ? `${packageName}.${enumName}` : enumName;
             const modifiers = this.extractModifiers(typeDecl.children?.classModifier);
+            const annotations = this.extractAnnotations(typeDecl.children?.classModifier);
 
             symbols.push({
               id: qualifiedName,
@@ -118,7 +119,7 @@ export class SymbolsAgent {
               },
               modifiers: modifiers as Modifier[],
               signature: `${modifiers.join(' ')} enum ${enumName}`,
-              annotations: [],
+              annotations,
               visibility: this.getVisibility(modifiers)
             });
 
@@ -136,6 +137,7 @@ export class SymbolsAgent {
           if (className) {
           const qualifiedName = packageName ? `${packageName}.${className}` : className;
           const modifiers = this.extractModifiers(typeDecl.children?.classModifier);
+          const annotations = this.extractAnnotations(typeDecl.children?.classModifier);
 
           // Add class symbol
           const visibility = this.getVisibility(modifiers);
@@ -153,7 +155,7 @@ export class SymbolsAgent {
             },
             modifiers: modifiers as Modifier[],
             signature: `${modifiers.join(' ')} class ${className}`,
-            annotations: [],
+            annotations,
             visibility
           });
 
@@ -175,6 +177,7 @@ export class SymbolsAgent {
         if (interfaceName) {
           const qualifiedName = packageName ? `${packageName}.${interfaceName}` : interfaceName;
           const modifiers = this.extractModifiers(typeDecl.children?.interfaceModifier);
+          const annotations = this.extractAnnotations(typeDecl.children?.interfaceModifier);
 
           symbols.push({
             id: qualifiedName,
@@ -190,7 +193,7 @@ export class SymbolsAgent {
             },
             modifiers: modifiers as Modifier[],
             signature: `${modifiers.join(' ')} interface ${interfaceName}`,
-            annotations: [],
+            annotations,
             visibility: this.getVisibility(modifiers)
           });
 
@@ -277,6 +280,7 @@ export class SymbolsAgent {
 
         if (enumName) {
           const qualifiedName = `${parentClassName}$${enumName}`;
+          const annotations = this.extractAnnotations(classModifiers);
           const visibility = this.getVisibility(modifiers);
 
           symbols.push({
@@ -293,7 +297,7 @@ export class SymbolsAgent {
             },
             modifiers: modifiers as Modifier[],
             signature: `${modifiers.join(' ')} enum ${enumName}`,
-            annotations: [],
+            annotations,
             visibility
           });
 
@@ -312,6 +316,7 @@ export class SymbolsAgent {
 
         if (className) {
           const qualifiedName = `${parentClassName}$${className}`;
+          const annotations = this.extractAnnotations(classModifiers);
           const visibility = this.getVisibility(modifiers);
 
           symbols.push({
@@ -328,7 +333,7 @@ export class SymbolsAgent {
             },
             modifiers: modifiers as Modifier[],
             signature: `${modifiers.join(' ')} class ${className}`,
-            annotations: [],
+            annotations,
             visibility
           });
 
@@ -347,6 +352,7 @@ export class SymbolsAgent {
 
         if (interfaceName) {
           const qualifiedName = `${parentClassName}$${interfaceName}`;
+          const annotations = this.extractAnnotations(classModifiers);
           const visibility = this.getVisibility(modifiers);
 
           symbols.push({
@@ -363,7 +369,7 @@ export class SymbolsAgent {
             },
             modifiers: modifiers as Modifier[],
             signature: `${modifiers.join(' ')} interface ${interfaceName}`,
-            annotations: [],
+            annotations,
             visibility
           });
 
@@ -391,6 +397,7 @@ export class SymbolsAgent {
     try {
       const fieldDecl = decl.children?.classMemberDeclaration?.[0]?.children?.fieldDeclaration?.[0];
       const modifiers = this.extractModifiers(decl.children?.classModifier);
+      const annotations = this.extractAnnotations(decl.children?.classModifier);
       const variables = fieldDecl?.children?.variableDeclaratorList?.[0]?.children?.variableDeclarator || [];
 
       for (const variable of variables) {
@@ -414,7 +421,7 @@ export class SymbolsAgent {
             },
             modifiers: modifiers as Modifier[],
             signature: `${modifiers.join(' ')} ${fieldName}`,
-            annotations: [],
+            annotations,
             visibility
           });
         }
@@ -432,7 +439,9 @@ export class SymbolsAgent {
   private extractMethod(decl: any, className: string, filePath: string): SymbolDefinition | null {
     try {
       const methodDecl = decl.children?.classMemberDeclaration?.[0]?.children?.methodDeclaration?.[0];
-      const modifiers = this.extractModifiers(decl.children?.classModifier);
+      // Extract modifiers and annotations from methodModifier (not classModifier!)
+      const modifiers = this.extractModifiers(methodDecl?.children?.methodModifier);
+      const annotations = this.extractAnnotations(methodDecl?.children?.methodModifier);
       const methodName = methodDecl?.children?.methodHeader?.[0]?.children?.methodDeclarator?.[0]?.children?.Identifier?.[0]?.image;
 
       if (methodName) {
@@ -453,7 +462,7 @@ export class SymbolsAgent {
           },
           modifiers: modifiers as Modifier[],
           signature: `${modifiers.join(' ')} ${methodName}()`,
-          annotations: [],
+          annotations,
           parameters: [],
           visibility
         };
@@ -472,6 +481,7 @@ export class SymbolsAgent {
     try {
       const constructorDecl = decl.children?.constructorDeclaration?.[0];
       const modifiers = this.extractModifiers(decl.children?.constructorModifier);
+      const annotations = this.extractAnnotations(decl.children?.constructorModifier);
       const constructorName = constructorDecl?.children?.simpleTypeName?.[0]?.children?.Identifier?.[0]?.image;
 
       if (constructorName) {
@@ -492,7 +502,7 @@ export class SymbolsAgent {
           },
           modifiers: modifiers as Modifier[],
           signature: `${modifiers.join(' ')} ${constructorName}()`,
-          annotations: [],
+          annotations,
           parameters: [],
           visibility
         };
@@ -507,7 +517,7 @@ export class SymbolsAgent {
   /**
    * Extract modifiers (public, private, static, etc.)
    */
-  private extractModifiers(modifierNodes: any[]): string[] {
+  private extractModifiers(modifierNodes: any[] | undefined): string[] {
     const modifiers: string[] = [];
 
     if (!modifierNodes) return modifiers;
@@ -522,6 +532,47 @@ export class SymbolsAgent {
     }
 
     return modifiers;
+  }
+
+  /**
+   * Extract annotations from modifier nodes
+   */
+  private extractAnnotations(modifierNodes: any[] | undefined): Annotation[] {
+    const annotations: Annotation[] = [];
+
+    if (!modifierNodes) return annotations;
+
+    for (const node of modifierNodes) {
+      // Check if this modifier node contains an annotation
+      const annotation = node.children?.annotation?.[0];
+      if (annotation) {
+        // Extract annotation name from typeName.Identifier
+        const annotationName = annotation.children?.typeName?.[0]
+          ?.children?.Identifier?.[0]?.image;
+
+        if (annotationName) {
+          // Check if annotation has parameters
+          const elementValuePairs = annotation.children?.elementValuePairList;
+          const hasParams = elementValuePairs !== undefined;
+
+          if (hasParams) {
+            // TODO: Extract actual parameter values
+            // For now, just indicate that parameters exist
+            annotations.push({
+              type: annotationName,
+              arguments: {}  // Placeholder for actual parameters
+            });
+          } else {
+            // Simple annotation without parameters
+            annotations.push({
+              type: annotationName
+            });
+          }
+        }
+      }
+    }
+
+    return annotations;
   }
 
   /**
@@ -570,6 +621,7 @@ export class SymbolsAgent {
         if (decl.children?.interfaceMethodDeclaration) {
           const methodDecl = decl.children.interfaceMethodDeclaration[0];
           const modifiers = this.extractModifiers(decl.children?.interfaceMethodModifier);
+          const annotations = this.extractAnnotations(decl.children?.interfaceMethodModifier);
           const methodName = methodDecl?.children?.methodHeader?.[0]?.children?.methodDeclarator?.[0]?.children?.Identifier?.[0]?.image;
 
           if (methodName) {
@@ -590,7 +642,7 @@ export class SymbolsAgent {
               },
               modifiers: modifiers as Modifier[],
               signature: `${modifiers.join(' ')} ${methodName}()`,
-              annotations: [],
+              annotations,
               parameters: [],
               visibility
             });

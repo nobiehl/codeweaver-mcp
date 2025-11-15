@@ -77,6 +77,17 @@ describe('ModernJavaFeatures Support', () => {
 
   it('should extract annotations from methods', async () => {
     const symbols = await agent.parseFile(testFile);
+
+    // Debug: Show all methods
+    const methods = symbols.filter(s => s.kind === 'method');
+    console.log(`\n=== ALL METHODS (${methods.length} total) ===`);
+    methods.slice(0, 5).forEach(m => {
+      const annStr = m.annotations && m.annotations.length > 0
+        ? m.annotations.map(a => `@${a.type}`).join(', ')
+        : 'none';
+      console.log(`  - ${m.name}: [${annStr}]`);
+    });
+
     const annotatedMethods = symbols.filter(s =>
       s.kind === 'method' && s.annotations && s.annotations.length > 0
     );
@@ -84,11 +95,11 @@ describe('ModernJavaFeatures Support', () => {
     console.log('\n=== ANNOTATED METHODS ===');
     annotatedMethods.forEach(m => {
       console.log(`  - ${m.qualifiedName}`);
-      console.log(`    Annotations: ${m.annotations!.join(', ')}`);
+      console.log(`    Annotations: ${m.annotations!.map(a => `@${a.type}`).join(', ')}`);
     });
 
     // Should find: @Override, @GetMapping, etc.
-    expect(annotatedMethods.length).toBeGreaterThanOrEqual(0); // Will be 0 if not extracted
+    expect(annotatedMethods.length).toBeGreaterThan(0);
   });
 
   it('should extract nested classes', async () => {
