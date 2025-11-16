@@ -8,7 +8,7 @@ Weaving Java Code Intelligence for LLMs - A lightweight Model Context Protocol s
 
 ## ⚡ Highlights
 
-- ✅ **Zero Native Dependencies** - Pure Node.js/TypeScript with java-parser
+- ✅ **Zero Native Dependencies*** - Pure Node.js/TypeScript with java-parser
 - ✅ **Dual Interface** - CLI tool AND MCP server from same codebase
 - ✅ **Token-Efficient** - Smart file reading with token limits
 - ✅ **Complete Java 21 LTS Support** 🆕 - Modern Java features (Records, Sealed Classes, Module System)
@@ -32,6 +32,8 @@ Weaving Java Code Intelligence for LLMs - A lightweight Model Context Protocol s
 - ✅ **Code Quality Analysis** - Cyclomatic complexity, LOC metrics, import analysis
 - ✅ **Git Integration** - Status, diff, blame, log, branches, compare
 - ✅ **Test-Driven** - 102 tests passing (15 new Java tests) 🆕
+
+> **\*** Core features (Discovery, Symbols, Search, Analysis, VCS) have zero native dependencies. Semantic Search optionally requires LanceDB + ONNX Runtime (native components).
 
 ---
 
