@@ -46,6 +46,14 @@ export class SymbolsAgent {
     try {
       const ast = parse(source);
 
+      // Check if it's a module-info.java (modular compilation unit)
+      const modularUnit = (ast as any).children?.modularCompilationUnit;
+      if (modularUnit && Array.isArray(modularUnit)) {
+        const moduleSymbols = this.extractModuleDeclaration(modularUnit[0], filePath);
+        symbols.push(...moduleSymbols);
+        return symbols;
+      }
+
       // Extract package name
       const packageName = this.extractPackage(ast);
 
@@ -878,6 +886,134 @@ export class SymbolsAgent {
       }
     } catch (error) {
       console.error('Error extracting enum constants:', error);
+    }
+
+    return symbols;
+  }
+
+  /**
+   * Extract module declaration (module-info.java)
+   */
+  private extractModuleDeclaration(modularUnit: any, filePath: string): SymbolDefinition[] {
+    const symbols: SymbolDefinition[] = [];
+
+    try {
+      const moduleDecl = modularUnit.children?.moduleDeclaration?.[0];
+      if (!moduleDecl) return symbols;
+
+      // Extract module name
+      const moduleNameParts = moduleDecl.children?.Identifier || [];
+      const moduleName = moduleNameParts.map((id: any) => id.image).join('.');
+
+      if (!moduleName) return symbols;
+
+      // Extract module directives
+      const directives = moduleDecl.children?.moduleDirective || [];
+      const directiveStrings: string[] = [];
+
+      for (const directive of directives) {
+        // requires directive
+        if (directive.children?.requiresModuleDirective) {
+          const req = directive.children.requiresModuleDirective[0];
+          const modifiers = req.children?.requiresModifier || [];
+          const modifierStr = modifiers.map((mod: any) => {
+            if (mod.children?.Transitive) return 'transitive';
+            if (mod.children?.Static) return 'static';
+            return '';
+          }).filter((s: string) => s).join(' ');
+
+          const requiredModule = req.children?.moduleName?.[0]?.children?.Identifier
+            ?.map((id: any) => id.image).join('.') || '';
+
+          directiveStrings.push(`requires ${modifierStr} ${requiredModule}`.trim());
+        }
+
+        // exports directive
+        if (directive.children?.exportsModuleDirective) {
+          const exp = directive.children.exportsModuleDirective[0];
+          const packageName = exp.children?.packageName?.[0]?.children?.Identifier
+            ?.map((id: any) => id.image).join('.') || '';
+
+          // Check if there's a "to" clause
+          if (exp.children?.To) {
+            const targetModules = exp.children?.moduleName || [];
+            const targets = targetModules.map((mod: any) =>
+              mod.children?.Identifier?.map((id: any) => id.image).join('.') || ''
+            ).filter((s: string) => s);
+            directiveStrings.push(`exports ${packageName} to ${targets.join(', ')}`);
+          } else {
+            directiveStrings.push(`exports ${packageName}`);
+          }
+        }
+
+        // opens directive
+        if (directive.children?.opensModuleDirective) {
+          const opens = directive.children.opensModuleDirective[0];
+          const packageName = opens.children?.packageName?.[0]?.children?.Identifier
+            ?.map((id: any) => id.image).join('.') || '';
+
+          // Check if there's a "to" clause
+          if (opens.children?.To) {
+            const targetModules = opens.children?.moduleName || [];
+            const targets = targetModules.map((mod: any) =>
+              mod.children?.Identifier?.map((id: any) => id.image).join('.') || ''
+            ).filter((s: string) => s);
+            directiveStrings.push(`opens ${packageName} to ${targets.join(', ')}`);
+          } else {
+            directiveStrings.push(`opens ${packageName}`);
+          }
+        }
+
+        // uses directive
+        if (directive.children?.usesModuleDirective) {
+          const uses = directive.children.usesModuleDirective[0];
+          const typeName = uses.children?.typeName?.[0]?.children?.Identifier
+            ?.map((id: any) => id.image).join('.') || '';
+          directiveStrings.push(`uses ${typeName}`);
+        }
+
+        // provides directive
+        if (directive.children?.providesModuleDirective) {
+          const provides = directive.children.providesModuleDirective[0];
+          const typeNames = provides.children?.typeName || [];
+
+          // First typeName is the service interface, rest are implementations
+          const interfaceName = typeNames[0]?.children?.Identifier
+            ?.map((id: any) => id.image).join('.') || '';
+
+          const implementations = typeNames.slice(1).map((type: any) =>
+            type.children?.Identifier?.map((id: any) => id.image).join('.') || ''
+          ).filter((s: string) => s);
+
+          directiveStrings.push(`provides ${interfaceName} with ${implementations.join(', ')}`);
+        }
+      }
+
+      // Create module symbol
+      const signature = directiveStrings.length > 0
+        ? `module ${moduleName} {\n  ${directiveStrings.join(';\n  ')};\n}`
+        : `module ${moduleName}`;
+
+      symbols.push({
+        id: moduleName,
+        name: moduleName,
+        qualifiedName: moduleName,
+        kind: 'module' as SymbolKind,
+        location: {
+          path: filePath,
+          startLine: this.extractLineNumber(moduleDecl),
+          startColumn: 0,
+          endLine: this.extractLineNumber(moduleDecl),
+          endColumn: 0
+        },
+        modifiers: [],
+        signature,
+        annotations: [],
+        visibility: 'public'
+      });
+
+    } catch (error) {
+      console.error('Error extracting module declaration:', error);
     }
 
     return symbols;

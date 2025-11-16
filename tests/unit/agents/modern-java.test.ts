@@ -159,4 +159,41 @@ describe('ModernJavaFeatures Support', () => {
     // Should find: findMax with <T extends Comparable<T>>
     expect(genericMethods.length).toBeGreaterThanOrEqual(0);
   });
+
+  it('should extract Java module (module-info.java)', async () => {
+    const moduleFile = 'java/module-info.java';
+    const symbols = await agent.parseFile(moduleFile);
+
+    console.log('\n=== MODULE SYMBOLS ===');
+    symbols.forEach(s => {
+      console.log(`  - ${s.kind}: ${s.qualifiedName}`);
+      if (s.signature) {
+        console.log(`    Signature:\n${s.signature}`);
+      }
+    });
+
+    // Should find exactly 1 module
+    const modules = symbols.filter(s => s.kind === 'module');
+    expect(modules.length).toBe(1);
+
+    const module = modules[0];
+    expect(module.name).toBe('com.example.myapp');
+    expect(module.qualifiedName).toBe('com.example.myapp');
+
+    // Check that signature contains module directives
+    expect(module.signature).toContain('requires');
+    expect(module.signature).toContain('exports');
+    expect(module.signature).toContain('opens');
+    expect(module.signature).toContain('uses');
+    expect(module.signature).toContain('provides');
+
+    // Check specific directives
+    expect(module.signature).toContain('requires transitive java.sql');
+    expect(module.signature).toContain('requires static lombok');
+    expect(module.signature).toContain('exports com.example.myapp.api');
+    expect(module.signature).toContain('exports com.example.myapp.model to com.example.client');
+    expect(module.signature).toContain('opens com.example.myapp.internal to spring.core, spring.beans');
+    expect(module.signature).toContain('uses com.example.myapp.spi.ServiceProvider');
+    expect(module.signature).toContain('provides com.example.myapp.spi.ServiceProvider with com.example.myapp.impl.ServiceProviderImpl');
+  });
 });

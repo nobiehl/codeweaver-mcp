@@ -6,6 +6,7 @@ export type SymbolKind =
   | 'package'
   | 'import'
   | 'class' | 'interface' | 'enum' | 'record' | 'annotation-type'
+  | 'module'
   | 'method' | 'constructor'
   | 'field' | 'enum-constant'
   | 'parameter' | 'local-variable'
