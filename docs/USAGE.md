@@ -529,7 +529,7 @@ codeweaver vcs compare main feature-branch
 
 ## 🤖 MCP Tools
 
-CodeWeaver bietet **18 MCP Tools** für die Integration mit LLMs.
+CodeWeaver bietet **19 MCP Tools** für die Integration mit LLMs.
 
 ### MCP-Server konfigurieren
 

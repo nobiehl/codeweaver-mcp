@@ -74,7 +74,7 @@ export function isMCPMode(): boolean {
 
 ## 🤖 Multi-Agent System
 
-### 7 Implementierte Agents
+### 9 Implementierte Agents
 
 | # | Agent | Zweck | Status |
 |---|-------|-------|--------|
@@ -163,7 +163,7 @@ src/
 ├── mcp/
 │   ├── index.ts                  # MCP entry point
 │   ├── server.ts                 # MCPServer class
-│   └── tools.ts                  # Tool registration (18 tools)
+│   └── tools.ts                  # Tool registration (19 tools)
 ├── core/
 │   ├── service.ts                # Shared business logic
 │   ├── agents/
@@ -227,9 +227,9 @@ LLM ← JSON Response ← MCP Handler ← Results ← ← ← ← ← ← ←
 - **Lines of Code**: ~5.000
 - **Tests**: 73 (68 unit + 5 integration)
 - **Test Success Rate**: 100% ✅
-- **MCP Tools**: 18
-- **CLI Commands**: 6 Groups, 20+ Commands
-- **Agents**: 7 implementiert (von 9 geplant)
+- **MCP Tools**: 19
+- **CLI Commands**: 7 Groups, 20+ Commands
+- **Agents**: 9 implementiert (alle geplanten Agents fertig!)
 - **Dependencies**: 100% Pure Node.js
 
 ---

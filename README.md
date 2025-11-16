@@ -58,7 +58,7 @@ npm run dev -- --mcp
 
 ### 📖 New to CodeWeaver?
 
-**👉 [DEVELOPER_WORKFLOW.md](./DEVELOPER_WORKFLOW.md)** - Complete end-to-end guide showing all 18 MCP tools in action!
+**👉 [DEVELOPER_WORKFLOW.md](./DEVELOPER_WORKFLOW.md)** - Complete end-to-end guide showing all 19 MCP tools in action!
 
 Learn by example:
 - Real-world scenario (User Management Microservice)
@@ -89,7 +89,7 @@ Learn by example:
 - **File Watcher Agent** - Automatic incremental index updates on file changes 🆕
 - **Symbol Storage** - In-memory symbol index with JSON Lines persistence
 
-**MCP Tools (18 total):**
+**MCP Tools (19 total):**
 
 *File & Project:*
 - `project.meta` - Get project metadata (Java version, modules, dependencies)
@@ -169,8 +169,8 @@ Learn by example:
 
 ```mermaid
 graph TB
-    CLI[CLI Interface<br/>6 Command Groups] --> SERVICE[CodeWeaverService]
-    MCP[MCP Server<br/>18 Tools] --> SERVICE
+    CLI[CLI Interface<br/>7 Command Groups] --> SERVICE[CodeWeaverService]
+    MCP[MCP Server<br/>19 Tools] --> SERVICE
 
     SERVICE --> DISC[Discovery Agent]
     SERVICE --> CACHE[Cache Agent]
@@ -737,7 +737,7 @@ MIT License - see [LICENSE](./LICENSE)
 
 ### 🗺️ Schnellzugriff
 
-- **[DEVELOPER_WORKFLOW.md](./DEVELOPER_WORKFLOW.md)** - 🚀 **START HERE!** Complete Developer Workflow (All 18 MCP tools in action)
+- **[DEVELOPER_WORKFLOW.md](./DEVELOPER_WORKFLOW.md)** - 🚀 **START HERE!** Complete Developer Workflow (All 19 MCP tools in action)
 - **[SEMANTIC_SEARCH.md](./SEMANTIC_SEARCH.md)** - 🔥 **NEU!** Semantic Search Guide mit Workflows, Best Practices & Integration
 - **[MULTI_COLLECTION_GUIDE.md](./MULTI_COLLECTION_GUIDE.md)** - 🎯 **NEU!** Multi-Collection Guide (Code + Docs indexieren & suchen)
 - **[FILE_WATCHER_GUIDE.md](./FILE_WATCHER_GUIDE.md)** - 🔍 **NEU!** File Watcher Guide (Automatische Incremental Updates)
@@ -761,8 +761,8 @@ MIT License - see [LICENSE](./LICENSE)
 **Alpha Release v0.1.0** ⚠️
 
 ✅ **Working Features:**
-- **MCP Server** with 18 tools (project, files, symbols, search, analysis, vcs)
-- **CLI** with 6 command groups + watch mode
+- **MCP Server** with 19 tools (project, files, symbols, search, analysis, vcs)
+- **CLI** with 7 command groups (includes watch mode)
 - **Semantic Search** with ONNX Runtime optimizations
 - **Multi-Collection Support** (Code + Docs)
 - **File Watcher** for automatic index updates

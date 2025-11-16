@@ -123,7 +123,7 @@ src/
 ├── index.ts                      # Main entry (auto-detection)
 ├── cli/
 │   ├── index.ts                  # CLI entry mit Commander.js
-│   └── commands/                 # 6 Command-Gruppen
+│   └── commands/                 # 7 Command-Gruppen
 │       ├── info.ts               # Projekt-Informationen
 │       ├── file.ts               # File-Reading-Commands
 │       ├── symbols.ts            # Symbol-Indexierung
@@ -134,7 +134,7 @@ src/
 ├── mcp/
 │   ├── index.ts                  # MCP entry mit stdio
 │   ├── server.ts                 # MCP Server (SDK v1.0.4)
-│   └── tools.ts                  # 18 MCP Tools
+│   └── tools.ts                  # 19 MCP Tools
 └── core/
     ├── service.ts                # ⭐ Shared Business Logic
     └── agents/                   # 9 spezialisierte Agents
@@ -144,7 +144,7 @@ src/
 
 ### Multi-Agent System
 
-**9 Agents** (7 implementiert, 2 geplant):
+**9 Agents** (alle implementiert):
 
 1. **DiscoveryAgent** (`agents/discovery.ts`) - Gradle-Metadaten (build.gradle, settings.gradle)
 2. **CacheAgent** (`agents/cache.ts`) - Content-addressable Caching mit SHA-256
@@ -168,7 +168,7 @@ src/
 - **In-Memory Maps** - Performance-kritische Lookups
 - **LanceDB** - Vector-Datenbank für semantische Suche (optional)
 
-### MCP Tools (18 total)
+### MCP Tools (19 total)
 
 **Projekt & Files:**
 - `project.meta` - Projekt-Metadaten (Java-Version, Module, Dependencies)
@@ -385,7 +385,7 @@ node -e "console.log('isTTY:', process.stdin.isTTY)"
 ### Documentation
 
 - `README.md` - Hauptdokumentation mit Quick-Start
-- `DEVELOPER_WORKFLOW.md` - End-to-End Developer Guide (alle 18 Tools in Aktion)
+- `DEVELOPER_WORKFLOW.md` - End-to-End Developer Guide (alle 19 Tools in Aktion)
 - `docs/ARCHITECTURE.md` - System-Architektur Details
 - `docs/USAGE.md` - CLI & MCP Usage Guide
 - `docs/TESTING.md` - Test-Strategie & Coverage
@@ -411,9 +411,9 @@ node -e "console.log('isTTY:', process.stdin.isTTY)"
 **Status**: Complete Modern Java Support (Java 8-23)
 
 **Features:**
-- ✅ 18 MCP Tools
-- ✅ 6 CLI Command-Gruppen
-- ✅ 9 Agents (7 implementiert)
+- ✅ 19 MCP Tools
+- ✅ 7 CLI Command-Gruppen
+- ✅ 9 Agents (alle implementiert)
 - ✅ Semantic Search mit ONNX Runtime
 - ✅ Multi-Collection Support
 - ✅ File-Watcher für Auto-Updates
