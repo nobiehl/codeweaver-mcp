@@ -15,7 +15,8 @@ export type SymbolKind =
 export type Modifier =
   | 'public' | 'protected' | 'private'
   | 'static' | 'final' | 'abstract' | 'native' | 'synchronized' | 'transient' | 'volatile'
-  | 'strictfp' | 'default';
+  | 'strictfp' | 'default'
+  | 'sealed' | 'non-sealed';
 
 export interface Location {
   path: string;

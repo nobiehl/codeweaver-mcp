@@ -110,8 +110,8 @@ export class SymbolsAgent {
 
           if (enumName) {
             const qualifiedName = packageName ? `${packageName}.${enumName}` : enumName;
-            const modifiers = this.extractModifiers(typeDecl.children?.classModifier);
-            const annotations = this.extractAnnotations(typeDecl.children?.classModifier);
+            const modifiers = this.extractModifiers(classDecl.children?.classModifier);
+            const annotations = this.extractAnnotations(classDecl.children?.classModifier);
 
             symbols.push({
               id: qualifiedName,
@@ -146,8 +146,8 @@ export class SymbolsAgent {
 
           if (recordName) {
             const qualifiedName = packageName ? `${packageName}.${recordName}` : recordName;
-            const modifiers = this.extractModifiers(typeDecl.children?.classModifier);
-            const annotations = this.extractAnnotations(typeDecl.children?.classModifier);
+            const modifiers = this.extractModifiers(classDecl.children?.classModifier);
+            const annotations = this.extractAnnotations(classDecl.children?.classModifier);
 
             // Extract record parameters from recordHeader
             const recordHeader = recordDecl.children?.recordHeader?.[0];
@@ -186,8 +186,8 @@ export class SymbolsAgent {
 
           if (className) {
           const qualifiedName = packageName ? `${packageName}.${className}` : className;
-          const modifiers = this.extractModifiers(typeDecl.children?.classModifier);
-          const annotations = this.extractAnnotations(typeDecl.children?.classModifier);
+          const modifiers = this.extractModifiers(classDecl.children?.classModifier);
+          const annotations = this.extractAnnotations(classDecl.children?.classModifier);
 
           // Add class symbol
           const visibility = this.getVisibility(modifiers);
@@ -226,8 +226,8 @@ export class SymbolsAgent {
 
         if (interfaceName) {
           const qualifiedName = packageName ? `${packageName}.${interfaceName}` : interfaceName;
-          const modifiers = this.extractModifiers(typeDecl.children?.interfaceModifier);
-          const annotations = this.extractAnnotations(typeDecl.children?.interfaceModifier);
+          const modifiers = this.extractModifiers(interfaceDecl.children?.interfaceModifier);
+          const annotations = this.extractAnnotations(interfaceDecl.children?.interfaceModifier);
 
           symbols.push({
             id: qualifiedName,
@@ -300,6 +300,17 @@ export class SymbolsAgent {
             filePath
           );
           symbols.push(...nestedTypeSymbols);
+        }
+
+        // Nested interface declarations
+        if (decl.children?.classMemberDeclaration?.[0]?.children?.interfaceDeclaration) {
+          const nestedInterfaceSymbols = this.extractNestedInterfaceDeclaration(
+            decl.children.classMemberDeclaration[0].children.interfaceDeclaration[0],
+            decl.children?.classModifier,
+            className,
+            filePath
+          );
+          symbols.push(...nestedInterfaceSymbols);
         }
       }
     } catch (error) {
@@ -480,6 +491,68 @@ export class SymbolsAgent {
   }
 
   /**
+   * Extract nested interface declarations within a class
+   */
+  private extractNestedInterfaceDeclaration(
+    interfaceDecl: any,
+    classModifiers: any[] | undefined,
+    parentClassName: string,
+    filePath: string
+  ): SymbolDefinition[] {
+    const symbols: SymbolDefinition[] = [];
+
+    try {
+      const modifiers = this.extractModifiers(classModifiers);
+      const annotations = this.extractAnnotations(classModifiers);
+
+      // Get interface modifiers from the interface declaration itself
+      const interfaceModifiers = this.extractModifiers(interfaceDecl.children?.interfaceModifier);
+      const interfaceAnnotations = this.extractAnnotations(interfaceDecl.children?.interfaceModifier);
+
+      // Merge modifiers and annotations
+      const allModifiers = [...modifiers, ...interfaceModifiers];
+      const allAnnotations = [...annotations, ...interfaceAnnotations];
+
+      const interfaceName = interfaceDecl.children?.normalInterfaceDeclaration?.[0]
+        ?.children?.typeIdentifier?.[0]?.children?.Identifier?.[0]?.image;
+
+      if (interfaceName) {
+        const qualifiedName = `${parentClassName}$${interfaceName}`;
+        const visibility = this.getVisibility(allModifiers);
+
+        symbols.push({
+          id: qualifiedName,
+          name: interfaceName,
+          qualifiedName,
+          kind: 'interface' as SymbolKind,
+          location: {
+            path: filePath,
+            startLine: this.extractLineNumber(interfaceDecl),
+            startColumn: 0,
+            endLine: this.extractLineNumber(interfaceDecl),
+            endColumn: 0
+          },
+          modifiers: allModifiers as Modifier[],
+          signature: `${allModifiers.join(' ')} interface ${interfaceName}`,
+          annotations: allAnnotations,
+          visibility
+        });
+
+        // Extract interface members
+        const interfaceBody = interfaceDecl.children?.normalInterfaceDeclaration?.[0]?.children?.interfaceBody?.[0];
+        if (interfaceBody) {
+          const memberSymbols = this.extractInterfaceMembers(interfaceBody, qualifiedName, filePath);
+          symbols.push(...memberSymbols);
+        }
+      }
+    } catch (error) {
+      console.error('Error extracting nested interface declaration:', error);
+    }
+
+    return symbols;
+  }
+
+  /**
    * Extract field declarations
    */
   private extractFields(decl: any, className: string, filePath: string): SymbolDefinition[] {
@@ -531,14 +604,27 @@ export class SymbolsAgent {
   private extractMethod(decl: any, className: string, filePath: string): SymbolDefinition | null {
     try {
       const methodDecl = decl.children?.classMemberDeclaration?.[0]?.children?.methodDeclaration?.[0];
+      const methodHeader = methodDecl?.children?.methodHeader?.[0];
+      const methodDeclarator = methodHeader?.children?.methodDeclarator?.[0];
+
       // Extract modifiers and annotations from methodModifier (not classModifier!)
       const modifiers = this.extractModifiers(methodDecl?.children?.methodModifier);
       const annotations = this.extractAnnotations(methodDecl?.children?.methodModifier);
-      const methodName = methodDecl?.children?.methodHeader?.[0]?.children?.methodDeclarator?.[0]?.children?.Identifier?.[0]?.image;
+      const methodName = methodDeclarator?.children?.Identifier?.[0]?.image;
 
       if (methodName) {
         const qualifiedName = `${className}#${methodName}`;
         const visibility = this.getVisibility(modifiers);
+
+        // Extract method parameters
+        const parameters = this.extractMethodParameters(methodDeclarator);
+
+        // Extract generic type parameters for signature
+        const typeParams = this.extractTypeParametersSignature(methodHeader);
+
+        // Build signature
+        const paramSig = parameters.map(p => `${p.type.name} ${p.name}`).join(', ');
+        const signature = `${modifiers.join(' ')} ${typeParams}${methodName}(${paramSig})`.trim();
 
         return {
           id: qualifiedName,
@@ -553,9 +639,9 @@ export class SymbolsAgent {
             endColumn: 0
           },
           modifiers: modifiers as Modifier[],
-          signature: `${modifiers.join(' ')} ${methodName}()`,
+          signature,
           annotations,
-          parameters: [],
+          parameters,
           visibility
         };
       }
@@ -564,6 +650,89 @@ export class SymbolsAgent {
     }
 
     return null;
+  }
+
+  /**
+   * Extract method parameters from method declarator
+   */
+  private extractMethodParameters(methodDeclarator: any): Parameter[] {
+    const parameters: Parameter[] = [];
+
+    try {
+      const formalParamList = methodDeclarator?.children?.formalParameterList?.[0];
+      const formalParams = formalParamList?.children?.formalParameter || [];
+
+      for (const param of formalParams) {
+        const varParam = param.children?.variableParaRegularParameter?.[0];
+        if (varParam) {
+          const paramName = varParam.children?.variableDeclaratorId?.[0]?.children?.Identifier?.[0]?.image;
+          const unannType = varParam.children?.unannType?.[0];
+
+          // Extract type name (simplified)
+          let typeName = 'Object';
+          if (unannType?.children?.unannPrimitiveType) {
+            typeName = unannType.children.unannPrimitiveType[0]?.children?.numericType?.[0]?.name || 'int';
+          } else if (unannType?.children?.unannReferenceType) {
+            const classType = unannType.children.unannReferenceType[0]?.children?.unannClassOrInterfaceType?.[0];
+            const identifiers = classType?.children?.unannClassType?.[0]?.children?.typeIdentifier || classType?.children?.Identifier;
+            if (identifiers) {
+              typeName = identifiers.map((id: any) => id?.children?.Identifier?.[0]?.image || id.image).join('.');
+            }
+          }
+
+          // Extract annotations from variableModifier
+          const annotations = this.extractAnnotations(varParam.children?.variableModifier);
+
+          if (paramName) {
+            parameters.push({
+              name: paramName,
+              type: { name: typeName },
+              annotations
+            });
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error extracting method parameters:', error);
+    }
+
+    return parameters;
+  }
+
+  /**
+   * Extract generic type parameters signature
+   */
+  private extractTypeParametersSignature(methodHeader: any): string {
+    try {
+      const typeParams = methodHeader?.children?.typeParameters?.[0];
+      if (!typeParams) return '';
+
+      const typeParamList = typeParams.children?.typeParameterList?.[0];
+      const typeParamsArray = typeParamList?.children?.typeParameter || [];
+
+      if (typeParamsArray.length === 0) return '';
+
+      const paramStrings = typeParamsArray.map((tp: any) => {
+        const identifier = tp.children?.typeIdentifier?.[0]?.children?.Identifier?.[0]?.image;
+        const typeBound = tp.children?.typeBound?.[0];
+
+        if (typeBound) {
+          const classTypes = typeBound.children?.classOrInterfaceType || [];
+          const bounds = classTypes.map((ct: any) => {
+            const ids = ct.children?.Identifier || [];
+            return ids.map((id: any) => id.image).join('.');
+          }).join(' & ');
+          return `${identifier} extends ${bounds}`;
+        }
+
+        return identifier;
+      }).filter((s: string) => s);
+
+      return paramStrings.length > 0 ? `<${paramStrings.join(', ')}> ` : '';
+    } catch (error) {
+      console.error('Error extracting type parameters:', error);
+      return '';
+    }
   }
 
   /**
@@ -621,6 +790,8 @@ export class SymbolsAgent {
       if (node.children?.Static) modifiers.push('static');
       if (node.children?.Final) modifiers.push('final');
       if (node.children?.Abstract) modifiers.push('abstract');
+      if (node.children?.Sealed) modifiers.push('sealed');
+      if (node.children?.NonSealed) modifiers.push('non-sealed');
     }
 
     return modifiers;

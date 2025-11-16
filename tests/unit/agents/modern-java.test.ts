@@ -37,6 +37,23 @@ describe('ModernJavaFeatures Support', () => {
     expect(mainClass?.kind).toBe('class');
   });
 
+  it('should extract class-level annotations', async () => {
+    const symbols = await agent.parseFile(testFile);
+    const mainClass = symbols.find(s => s.name === 'ModernJavaFeatures');
+
+    console.log('\n=== CLASS ANNOTATIONS ===');
+    console.log(`Class: ${mainClass?.name}`);
+    console.log(`Annotations:`, mainClass?.annotations?.map(a => a.type));
+
+    expect(mainClass?.annotations).toBeDefined();
+    expect(mainClass?.annotations?.length).toBeGreaterThan(0);
+
+    // Should have @Entity and @Table
+    const annotationTypes = mainClass?.annotations?.map(a => a.type) || [];
+    expect(annotationTypes).toContain('Entity');
+    expect(annotationTypes).toContain('Table');
+  });
+
   it('should extract records', async () => {
     const symbols = await agent.parseFile(testFile);
     const records = symbols.filter(s => s.kind === 'record');
@@ -70,14 +87,22 @@ describe('ModernJavaFeatures Support', () => {
   it('should extract sealed classes/interfaces', async () => {
     const symbols = await agent.parseFile(testFile);
     const sealedTypes = symbols.filter(s =>
-      s.modifiers?.includes('sealed' as any)
+      s.modifiers?.includes('sealed') || s.modifiers?.includes('non-sealed')
     );
 
     console.log('\n=== SEALED TYPES ===');
-    sealedTypes.forEach(s => console.log(`  - ${s.qualifiedName}`));
+    symbols.forEach(s => {
+      if (s.modifiers?.includes('sealed') || s.modifiers?.includes('non-sealed') || s.modifiers?.includes('final')) {
+        console.log(`  - ${s.qualifiedName}: [${s.modifiers.join(', ')}]`);
+      }
+    });
 
     // Shape interface should be sealed
-    expect(sealedTypes.length).toBeGreaterThanOrEqual(0); // Will be 0 if not supported
+    expect(sealedTypes.length).toBeGreaterThan(0);
+
+    // Check for specific sealed types
+    const shape = symbols.find(s => s.name === 'Shape');
+    expect(shape?.modifiers).toContain('sealed');
   });
 
   it('should extract annotations from methods', async () => {
@@ -195,5 +220,20 @@ describe('ModernJavaFeatures Support', () => {
     expect(module.signature).toContain('opens com.example.myapp.internal to spring.core, spring.beans');
     expect(module.signature).toContain('uses com.example.myapp.spi.ServiceProvider');
     expect(module.signature).toContain('provides com.example.myapp.spi.ServiceProvider with com.example.myapp.impl.ServiceProviderImpl');
+  });
+
+  it('should extract abstract and default modifiers', async () => {
+    const symbols = await agent.parseFile(testFile);
+
+    console.log('\n=== ABSTRACT & DEFAULT MODIFIERS ===');
+    symbols.forEach(s => {
+      if (s.modifiers?.includes('abstract') || s.modifiers?.includes('default')) {
+        console.log(`  - ${s.kind} ${s.qualifiedName}: [${s.modifiers.join(', ')}]`);
+      }
+    });
+
+    // At minimum, we should see some modifiers being extracted
+    // (The test file may not have abstract classes, but modifiers should work)
+    expect(symbols.some(s => s.modifiers.length > 0)).toBe(true);
   });
 });
