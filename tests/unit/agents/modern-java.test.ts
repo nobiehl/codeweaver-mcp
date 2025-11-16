@@ -236,4 +236,51 @@ describe('ModernJavaFeatures Support', () => {
     // (The test file may not have abstract classes, but modifiers should work)
     expect(symbols.some(s => s.modifiers.length > 0)).toBe(true);
   });
+
+  it('should extract method parameters with annotations', async () => {
+    const symbols = await agent.parseFile(testFile);
+    const getUser = symbols.find(s => s.name === 'getUser');
+
+    console.log('\n=== METHOD PARAMETERS ===');
+    console.log(`Method: ${getUser?.name}`);
+    console.log(`Parameters:`, getUser?.parameters?.map(p => `${p.type.name} ${p.name}`));
+    console.log(`Parameter Annotations:`, getUser?.parameters?.map(p => p.annotations.map(a => a.type)));
+
+    expect(getUser?.parameters).toBeDefined();
+    expect(getUser?.parameters?.length).toBe(1);
+
+    const param = getUser?.parameters?.[0];
+    expect(param?.name).toBe('id');
+    expect(param?.type.name).toBe('Long');
+    expect(param?.annotations?.length).toBeGreaterThan(0);
+    expect(param?.annotations?.some(a => a.type === 'PathVariable')).toBe(true);
+  });
+
+  it('should extract generic type parameters in signature', async () => {
+    const symbols = await agent.parseFile(testFile);
+    const findMax = symbols.find(s => s.name === 'findMax');
+
+    console.log('\n=== GENERIC METHOD SIGNATURE ===');
+    console.log(`Method: ${findMax?.name}`);
+    console.log(`Signature: ${findMax?.signature}`);
+
+    expect(findMax?.signature).toBeDefined();
+    expect(findMax?.signature).toContain('<T extends');
+    expect(findMax?.signature).toContain('Comparable');
+  });
+
+  it('should extract nested interface', async () => {
+    const symbols = await agent.parseFile(testFile);
+    const shape = symbols.find(s => s.name === 'Shape' && s.kind === 'interface');
+
+    console.log('\n=== NESTED INTERFACE ===');
+    console.log(`Interface: ${shape?.qualifiedName}`);
+    console.log(`Modifiers: [${shape?.modifiers?.join(', ')}]`);
+    console.log(`Kind: ${shape?.kind}`);
+
+    expect(shape).toBeDefined();
+    expect(shape?.kind).toBe('interface');
+    expect(shape?.qualifiedName).toContain('$Shape');
+    expect(shape?.modifiers).toContain('sealed');
+  });
 });

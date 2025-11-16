@@ -673,10 +673,19 @@ export class SymbolsAgent {
           if (unannType?.children?.unannPrimitiveType) {
             typeName = unannType.children.unannPrimitiveType[0]?.children?.numericType?.[0]?.name || 'int';
           } else if (unannType?.children?.unannReferenceType) {
-            const classType = unannType.children.unannReferenceType[0]?.children?.unannClassOrInterfaceType?.[0];
-            const identifiers = classType?.children?.unannClassType?.[0]?.children?.typeIdentifier || classType?.children?.Identifier;
-            if (identifiers) {
-              typeName = identifiers.map((id: any) => id?.children?.Identifier?.[0]?.image || id.image).join('.');
+            const classOrInterfaceType = unannType.children.unannReferenceType[0]?.children?.unannClassOrInterfaceType?.[0];
+            const unannClassType = classOrInterfaceType?.children?.unannClassType?.[0];
+
+            // Try to get Identifier directly from unannClassType
+            const identifiers = unannClassType?.children?.Identifier;
+            if (identifiers && identifiers.length > 0) {
+              typeName = identifiers.map((id: any) => id.image).join('.');
+            } else {
+              // Fallback to typeIdentifier
+              const typeIdentifiers = unannClassType?.children?.typeIdentifier;
+              if (typeIdentifiers) {
+                typeName = typeIdentifiers.map((id: any) => id?.children?.Identifier?.[0]?.image).join('.');
+              }
             }
           }
 
@@ -717,11 +726,16 @@ export class SymbolsAgent {
         const typeBound = tp.children?.typeBound?.[0];
 
         if (typeBound) {
-          const classTypes = typeBound.children?.classOrInterfaceType || [];
-          const bounds = classTypes.map((ct: any) => {
-            const ids = ct.children?.Identifier || [];
-            return ids.map((id: any) => id.image).join('.');
-          }).join(' & ');
+          const classOrInterfaceTypes = typeBound.children?.classOrInterfaceType || [];
+          const bounds = classOrInterfaceTypes.map((coit: any) => {
+            // Extract from classType (not directly from classOrInterfaceType)
+            const classType = coit.children?.classType?.[0];
+            if (classType) {
+              const ids = classType.children?.Identifier || [];
+              return ids.map((id: any) => id.image).join('.');
+            }
+            return '';
+          }).filter((s: string) => s).join(' & ');
           return `${identifier} extends ${bounds}`;
         }
 

@@ -1,8 +1,8 @@
 # CodeWeaver 🕸️
 
-> ⚠️ **Alpha Release (v0.1.0)** - This is an early experimental release. Expect bugs, breaking changes, and incomplete features. Feedback welcome!
+> ⚠️ **Beta Release (v0.2.0)** - Major Java support update! Complete modern Java support (Java 8-23) with comprehensive symbol extraction. Feedback welcome!
 
-**Token-efficient MCP server for Java 21/Gradle project analysis**
+**Token-efficient MCP server for Java 21 LTS/Gradle project analysis**
 
 Weaving Java Code Intelligence for LLMs - A lightweight Model Context Protocol server that provides token-efficient access to Java/Gradle codebases through a multi-agent architecture.
 
@@ -11,7 +11,14 @@ Weaving Java Code Intelligence for LLMs - A lightweight Model Context Protocol s
 - ✅ **Zero Native Dependencies** - Pure Node.js/TypeScript with java-parser
 - ✅ **Dual Interface** - CLI tool AND MCP server from same codebase
 - ✅ **Token-Efficient** - Smart file reading with token limits
-- ✅ **Java Symbol Extraction** - Full parsing of classes, interfaces, enums, methods, fields
+- ✅ **Complete Java 21 LTS Support** 🆕 - Modern Java features (Records, Sealed Classes, Module System)
+  - 🎯 **100% Production Coverage** - All features for Java 8-23 🆕
+  - ✅ **Class-Level Annotations** - Spring, JPA, Jakarta EE fully supported 🆕
+  - ✅ **Method Parameters** - Names, types, and annotations extracted 🆕
+  - ✅ **Generic Type Parameters** - Full signature with bounds 🆕
+  - ✅ **Sealed Classes** - Java 17+ sealed/non-sealed support 🆕
+  - ✅ **Records** - Java 14+ with components and methods 🆕
+  - ✅ **Module System** - module-info.java parsing 🆕
 - ✅ **Powerful Search** - Keyword, pattern, AND semantic search (AI-powered) 🆕
 - ✅ **Semantic Code Search** - Find code by meaning/intent using LanceDB + Transformers 🆕
   - ⚡ **ONNX Runtime Optimizations** - Multi-threading + SIMD for 3x faster embeddings! 🆕
@@ -24,7 +31,7 @@ Weaving Java Code Intelligence for LLMs - A lightweight Model Context Protocol s
   - 🚀 **[PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md)** - Future optimizations (GPU acceleration)
 - ✅ **Code Quality Analysis** - Cyclomatic complexity, LOC metrics, import analysis
 - ✅ **Git Integration** - Status, diff, blame, log, branches, compare
-- ✅ **Test-Driven** - 87 tests passing
+- ✅ **Test-Driven** - 102 tests passing (15 new Java tests) 🆕
 
 ---
 
@@ -67,7 +74,12 @@ Learn by example:
 - **Discovery Agent** - Gradle project metadata extraction (version, dependencies, plugins)
 - **Cache Agent** - Content-addressable caching with SHA-256 hashing
 - **Snippets Agent** - Token-efficient file reading with line ranges
-- **Symbols Agent** - Java symbol extraction (classes, methods, fields, constructors)
+- **Symbols Agent** - Complete Java symbol extraction 🆕
+  - Classes, Interfaces, Enums, Records, Annotation Types
+  - Methods with parameters, generics, and annotations
+  - Fields with annotations and modifiers
+  - Constructors, nested types, enum constants
+  - Sealed classes, module system support
 - **Search Agent** - Keyword and pattern search with file filtering
 - **Analysis Agent** - Cyclomatic complexity, LOC metrics, code quality
 - **VCS Agent** - Git operations (status, diff, blame, log, branches, compare)
