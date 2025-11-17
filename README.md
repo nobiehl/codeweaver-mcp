@@ -59,15 +59,21 @@ npm run dev -- analysis project
 npm run dev -- --mcp
 ```
 
-### 📖 New to CodeWeaver?
+### 📖 Documentation
 
-**👉 [DEVELOPER_WORKFLOW.md](./DEVELOPER_WORKFLOW.md)** - Complete end-to-end guide showing all 19 MCP tools in action!
+**Getting Started:**
+- **👉 [QUICKSTART.md](./QUICKSTART.md)** - Get up and running in 5 minutes! Installation, basic usage, and common use cases.
+- **👉 [DEVELOPER_WORKFLOW.md](./DEVELOPER_WORKFLOW.md)** - Complete end-to-end guide showing all 19 MCP tools in action with real-world scenarios.
 
-Learn by example:
-- Real-world scenario (User Management Microservice)
-- 6 development phases from onboarding to deployment
-- Typical Claude Code conversations
-- Best practices and power user tips
+**Reference:**
+- **📚 [API.md](./API.md)** - Complete API reference for all 19 MCP tools with schemas, examples, and use cases.
+- **⚡ [PERFORMANCE.md](./PERFORMANCE.md)** - Performance benchmarks, scalability analysis, and optimization tips.
+
+**Advanced Features:**
+- **🔍 [SEMANTIC_SEARCH.md](./SEMANTIC_SEARCH.md)** - Semantic search guide with workflows and best practices.
+- **🎯 [MULTI_COLLECTION_GUIDE.md](./MULTI_COLLECTION_GUIDE.md)** - Multi-collection usage (Code + Docs).
+- **🔍 [FILE_WATCHER_GUIDE.md](./FILE_WATCHER_GUIDE.md)** - Keep your index always up-to-date.
+- **🚀 [PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md)** - Future optimizations (GPU acceleration).
 
 ---
 
