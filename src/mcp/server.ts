@@ -2,7 +2,7 @@ import type { ToolDefinition, ToolHandler, ToolRegistration } from '../types/mcp
 
 export class MCPServer {
   private name = 'codeweaver';
-  private version = '0.1.0';
+  private version = '0.2.0';
   private tools: Map<string, ToolRegistration> = new Map();
 
   getName(): string {
