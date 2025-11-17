@@ -28,10 +28,10 @@ Weaving Code Intelligence for LLMs - A lightweight Model Context Protocol server
   - ⚡ **16x faster with Batch-Processing** - 10k files in ~10 min (was 8h!)
   - 🎯 **Multi-Collection Support** - Separate indexes for Code AND Docs! 🆕
   - 🔍 **File Watcher** - Automatic incremental updates on file changes! 🆕
-  - 📖 **[SEMANTIC_SEARCH.md](./SEMANTIC_SEARCH.md)** - Comprehensive guide with workflows and best practices
-  - 🎯 **[MULTI_COLLECTION_GUIDE.md](./MULTI_COLLECTION_GUIDE.md)** - Multi-collection usage guide (Code + Docs)
-  - 🔍 **[FILE_WATCHER_GUIDE.md](./FILE_WATCHER_GUIDE.md)** - Keep your index always up-to-date!
-  - 🚀 **[PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md)** - Future optimizations (GPU acceleration)
+  - 📖 **[SEMANTIC_SEARCH.md](./docs/guides/SEMANTIC_SEARCH.md)** - Comprehensive guide with workflows and best practices
+  - 🎯 **[MULTI_COLLECTION_GUIDE.md](./docs/guides/MULTI_COLLECTION_GUIDE.md)** - Multi-collection usage guide (Code + Docs)
+  - 🔍 **[FILE_WATCHER_GUIDE.md](./docs/guides/FILE_WATCHER_GUIDE.md)** - Keep your index always up-to-date!
+  - 🚀 **[PERFORMANCE_OPTIMIZATION.md](./docs/architecture/PERFORMANCE_OPTIMIZATION.md)** - Future optimizations (GPU acceleration)
 - ✅ **Code Quality Analysis** - Cyclomatic complexity, LOC metrics, import analysis
 - ✅ **Git Integration** - Status, diff, blame, log, branches, compare
 - ✅ **Test-Driven** - 218 tests passing | 19 skipped (Python WASM config) - All core features fully tested! 🆕
@@ -61,19 +61,21 @@ npm run dev -- --mcp
 
 ### 📖 Documentation
 
-**Getting Started:**
-- **👉 [QUICKSTART.md](./QUICKSTART.md)** - Get up and running in 5 minutes! Installation, basic usage, and common use cases.
-- **👉 [DEVELOPER_WORKFLOW.md](./DEVELOPER_WORKFLOW.md)** - Complete end-to-end guide showing all 19 MCP tools in action with real-world scenarios.
+**📚 [Complete Documentation Index](./docs/INDEX.md)** - Full navigation of all CodeWeaver documentation
 
-**Reference:**
-- **📚 [API.md](./API.md)** - Complete API reference for all 19 MCP tools with schemas, examples, and use cases.
-- **⚡ [PERFORMANCE.md](./PERFORMANCE.md)** - Performance benchmarks, scalability analysis, and optimization tips.
+**Quick Links:**
 
-**Advanced Features:**
-- **🔍 [SEMANTIC_SEARCH.md](./SEMANTIC_SEARCH.md)** - Semantic search guide with workflows and best practices.
-- **🎯 [MULTI_COLLECTION_GUIDE.md](./MULTI_COLLECTION_GUIDE.md)** - Multi-collection usage (Code + Docs).
-- **🔍 [FILE_WATCHER_GUIDE.md](./FILE_WATCHER_GUIDE.md)** - Keep your index always up-to-date.
-- **🚀 [PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md)** - Future optimizations (GPU acceleration).
+| Category | Documents | Description |
+|----------|-----------|-------------|
+| **🚀 Getting Started** | [QUICKSTART](./docs/getting-started/QUICKSTART.md) • [WORKFLOW](./docs/getting-started/DEVELOPER_WORKFLOW.md) • [PRODUCTION](./docs/getting-started/PRODUCTION_READINESS.md) | Installation, tutorials, deployment |
+| **📖 Reference** | [API](./docs/reference/API.md) • [USAGE](./docs/reference/USAGE.md) • [PERFORMANCE](./docs/reference/PERFORMANCE.md) | API reference, benchmarks, usage guide |
+| **🎯 Guides** | [SEMANTIC SEARCH](./docs/guides/SEMANTIC_SEARCH.md) • [MULTI-COLLECTION](./docs/guides/MULTI_COLLECTION_GUIDE.md) • [FILE WATCHER](./docs/guides/FILE_WATCHER_GUIDE.md) | Advanced feature guides |
+| **🏗️ Architecture** | [ARCHITECTURE](./docs/architecture/ARCHITECTURE.md) • [DATA MODELS](./docs/architecture/DATA_MODELS.md) • [TOKEN MGMT](./docs/architecture/TOKEN_MANAGEMENT.md) | System design, technical deep-dives |
+| **👨‍💻 Development** | [CONTRIBUTING](./docs/development/CONTRIBUTING.md) • [TESTING](./docs/development/TESTING.md) • [ROADMAP](./docs/development/STATUS_AND_ROADMAP.md) | For contributors |
+| **📦 Project** | [CHANGELOG](./docs/project/CHANGELOG.md) • [CODE OF CONDUCT](./docs/project/CODE_OF_CONDUCT.md) | Release notes, governance |
+| **📝 Other** | [GLOSSARY](./docs/GLOSSARY.md) | Terms & acronyms |
+
+**New to CodeWeaver?** Start with [QUICKSTART.md](./docs/getting-started/QUICKSTART.md) (5 minutes) or [DEVELOPER_WORKFLOW.md](./docs/getting-started/DEVELOPER_WORKFLOW.md) (20 minutes).
 
 ---
 
@@ -787,18 +789,16 @@ MIT License - see [LICENSE](./LICENSE)
 
 ### 🗺️ Schnellzugriff
 
-- **[DEVELOPER_WORKFLOW.md](./DEVELOPER_WORKFLOW.md)** - 🚀 **START HERE!** Complete Developer Workflow (All 19 MCP tools in action)
-- **[SEMANTIC_SEARCH.md](./SEMANTIC_SEARCH.md)** - 🔥 **NEU!** Semantic Search Guide mit Workflows, Best Practices & Integration
-- **[MULTI_COLLECTION_GUIDE.md](./MULTI_COLLECTION_GUIDE.md)** - 🎯 **NEU!** Multi-Collection Guide (Code + Docs indexieren & suchen)
-- **[FILE_WATCHER_GUIDE.md](./FILE_WATCHER_GUIDE.md)** - 🔍 **NEU!** File Watcher Guide (Automatische Incremental Updates)
-- **[PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md)** - 🚀 **NEU!** Performance Roadmap (GPU Acceleration)
-- **[docs/README.md](./docs/README.md)** - Dokumentations-Index
-- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - System-Architektur (Dual-Mode, Multi-Agent)
-- **[docs/USAGE.md](./docs/USAGE.md)** - CLI & MCP Usage Guide
-- **[docs/STATUS_AND_ROADMAP.md](./docs/STATUS_AND_ROADMAP.md)** - Feature-Status und Roadmap
-- **[docs/TESTING.md](./docs/TESTING.md)** - Test-Strategie
-- **[docs/DATA_MODELS.md](./docs/DATA_MODELS.md)** - Datenstrukturen
-- **[docs/TOKEN_MANAGEMENT.md](./docs/TOKEN_MANAGEMENT.md)** - Token-Effizienz
+**Komplette Navigation:** **[docs/INDEX.md](./docs/INDEX.md)** - Vollständiger Dokumentations-Index mit Navigation nach Rolle
+
+**Beliebte Dokumente:**
+- **[DEVELOPER_WORKFLOW.md](./docs/getting-started/DEVELOPER_WORKFLOW.md)** - 🚀 **START HERE!** Complete Developer Workflow (All 19 MCP tools in action)
+- **[QUICKSTART.md](./docs/getting-started/QUICKSTART.md)** - ⚡ 5-Minuten Quick-Start Guide
+- **[API.md](./docs/reference/API.md)** - 📚 Complete API Reference (alle 19 MCP Tools)
+- **[PERFORMANCE.md](./docs/reference/PERFORMANCE.md)** - ⚡ Performance Benchmarks & Scalability
+- **[SEMANTIC_SEARCH.md](./docs/guides/SEMANTIC_SEARCH.md)** - 🔥 Semantic Search Guide mit Workflows
+- **[ARCHITECTURE.md](./docs/architecture/ARCHITECTURE.md)** - 🏗️ System-Architektur (Dual-Mode, Multi-Agent)
+- **[GLOSSARY.md](./docs/GLOSSARY.md)** - 📖 Glossar aller Begriffe & Akronyme
 
 ### 🔗 Externe Links
 
