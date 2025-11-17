@@ -48,8 +48,8 @@
 3. Datenmodelle: [DATA_MODELS.md](./DATA_MODELS.md)
 
 **Planning nächste Features?**
-1. Fehlende Features: [STATUS_AND_ROADMAP.md#-übersicht-was-fehlt](./STATUS_AND_ROADMAP.md#-übersicht-was-fehlt)
-2. Prioritäten: [STATUS_AND_ROADMAP.md#-empfohlene-roadmap](./STATUS_AND_ROADMAP.md#-empfohlene-roadmap)
+1. Fehlende Features: [STATUS_AND_ROADMAP.md#übersicht-was-fehlt](./STATUS_AND_ROADMAP.md#übersicht-was-fehlt)
+2. Prioritäten: [STATUS_AND_ROADMAP.md#empfohlene-roadmap](./STATUS_AND_ROADMAP.md#empfohlene-roadmap)
 
 ---
 
