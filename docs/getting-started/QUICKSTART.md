@@ -435,15 +435,15 @@ codeweaver symbols index
 ## 📖 Next Steps
 
 ### Read the Full Documentation
-- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Understand how CodeWeaver works
-- **[USAGE.md](./docs/USAGE.md)** - Complete CLI command reference
-- **[PERFORMANCE.md](./PERFORMANCE.md)** - Performance benchmarks
-- **[API.md](./API.md)** - MCP tool reference (all 19 tools)
+- **[ARCHITECTURE.md](./../architecture/ARCHITECTURE.md)** - Understand how CodeWeaver works
+- **[USAGE.md](./../reference/USAGE.md)** - Complete CLI command reference
+- **[PERFORMANCE.md](./../reference/PERFORMANCE.md)** - Performance benchmarks
+- **[API.md](./../reference/API.md)** - MCP tool reference (all 19 tools)
 
 ### Try Advanced Features
-- **Semantic Search** - [SEMANTIC_SEARCH.md](./SEMANTIC_SEARCH.md)
-- **Multi-Collection** - [MULTI_COLLECTION_GUIDE.md](./MULTI_COLLECTION_GUIDE.md)
-- **File Watcher** - [FILE_WATCHER_GUIDE.md](./FILE_WATCHER_GUIDE.md)
+- **Semantic Search** - [SEMANTIC_SEARCH.md](./../guides/SEMANTIC_SEARCH.md)
+- **Multi-Collection** - [MULTI_COLLECTION_GUIDE.md](./../guides/MULTI_COLLECTION_GUIDE.md)
+- **File Watcher** - [FILE_WATCHER_GUIDE.md](./../guides/FILE_WATCHER_GUIDE.md)
 
 ### Join the Community
 - **GitHub:** [nobiehl/codeweaver-mcp](https://github.com/nobiehl/codeweaver-mcp)
@@ -504,6 +504,6 @@ You're now ready to use CodeWeaver MCP!
 
 ---
 
-**Questions?** Check [docs/USAGE.md](./docs/USAGE.md) or [open an issue](https://github.com/nobiehl/codeweaver-mcp/issues)
+**Questions?** Check [docs/USAGE.md](./../reference/USAGE.md) or [open an issue](https://github.com/nobiehl/codeweaver-mcp/issues)
 
 **Happy Coding! 🚀**

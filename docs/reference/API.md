@@ -615,7 +615,7 @@ const result = await client.callTool('search.semantic', {
 
 **Performance:** <1.2s for 10k files (after initial indexing)
 
-**Note:** Requires initial semantic indexing (~10 minutes for 10k files). See [SEMANTIC_SEARCH.md](./SEMANTIC_SEARCH.md).
+**Note:** Requires initial semantic indexing (~10 minutes for 10k files). See [SEMANTIC_SEARCH.md](./../guides/SEMANTIC_SEARCH.md).
 
 ---
 
@@ -1072,9 +1072,9 @@ await client.callTool('search.keyword', {
 
 ## Related Documentation
 
-- **[QUICKSTART.md](./QUICKSTART.md)** - Get started in 5 minutes
-- **[USAGE.md](./docs/USAGE.md)** - CLI usage (same tools, different interface)
-- **[SEMANTIC_SEARCH.md](./SEMANTIC_SEARCH.md)** - Semantic search guide
+- **[QUICKSTART.md](./../getting-started/QUICKSTART.md)** - Get started in 5 minutes
+- **[USAGE.md](./USAGE.md)** - CLI usage (same tools, different interface)
+- **[SEMANTIC_SEARCH.md](./../guides/SEMANTIC_SEARCH.md)** - Semantic search guide
 - **[PERFORMANCE.md](./PERFORMANCE.md)** - Performance benchmarks
 
 ---

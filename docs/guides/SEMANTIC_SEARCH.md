@@ -223,7 +223,7 @@ console.log(`Size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
 ## ⚡ Weitere Optimierungen
 
 Für noch schnellere Performance (bis zu 240x!) siehe:
-**📖 [PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md)**
+**📖 [PERFORMANCE_OPTIMIZATION.md](./../architecture/PERFORMANCE_OPTIMIZATION.md)**
 
 - **ONNX Runtime** - 3x zusätzlicher Speedup (10 Min für 10k Files)
 - **GPU-Acceleration** - 10-50x mit CUDA (2-3 Min für 10k Files)

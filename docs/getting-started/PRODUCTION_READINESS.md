@@ -332,7 +332,7 @@ Dieser Guide klärt, welche CodeWeaver-Features production-ready sind und welche
 - **Streaming** für große Files
 - **Chunking** für Memory-Effizienz
 
-Siehe: [PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md)
+Siehe: [PERFORMANCE_OPTIMIZATION.md](./../architecture/PERFORMANCE_OPTIMIZATION.md)
 
 ---
 

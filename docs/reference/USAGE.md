@@ -1049,11 +1049,11 @@ codeweaver search files "*.java" | wc -l
 
 ## 📚 Weiterführende Dokumentation
 
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System-Architektur
-- **[STATUS_AND_ROADMAP.md](./STATUS_AND_ROADMAP.md)** - Feature-Status und Roadmap
-- **[DATA_MODELS.md](./DATA_MODELS.md)** - Datenstrukturen
-- **[TESTING.md](./TESTING.md)** - Test-Strategie
-- **[TOKEN_MANAGEMENT.md](./TOKEN_MANAGEMENT.md)** - Token-Effizienz
+- **[ARCHITECTURE.md](./../architecture/ARCHITECTURE.md)** - System-Architektur
+- **[STATUS_AND_ROADMAP.md](./../development/STATUS_AND_ROADMAP.md)** - Feature-Status und Roadmap
+- **[DATA_MODELS.md](./../architecture/DATA_MODELS.md)** - Datenstrukturen
+- **[TESTING.md](./../development/TESTING.md)** - Test-Strategie
+- **[TOKEN_MANAGEMENT.md](./../architecture/TOKEN_MANAGEMENT.md)** - Token-Effizienz
 
 ---
 

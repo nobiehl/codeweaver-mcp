@@ -235,6 +235,6 @@ LLM ← JSON Response ← MCP Handler ← Results ← ← ← ← ← ← ←
 ---
 
 **Mehr Details**:
-- Fehlende Features: [STATUS_AND_ROADMAP.md](./STATUS_AND_ROADMAP.md)
-- Testing: [TESTING.md](./TESTING.md)
-- Usage: [USAGE.md](./USAGE.md)
+- Fehlende Features: [STATUS_AND_ROADMAP.md](./../development/STATUS_AND_ROADMAP.md)
+- Testing: [TESTING.md](./../development/TESTING.md)
+- Usage: [USAGE.md](./../reference/USAGE.md)

@@ -140,7 +140,7 @@ codeweaver watch
 codeweaver search semantic "user service"
 ```
 
-**Detaillierte Dokumentation:** [FILE_WATCHER_GUIDE.md](./FILE_WATCHER_GUIDE.md)
+**Detaillierte Dokumentation:** [FILE_WATCHER_GUIDE.md](./../guides/FILE_WATCHER_GUIDE.md)
 
 ---
 

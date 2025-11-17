@@ -152,10 +152,10 @@ jobs:
 - **Combined Result**: 10k files in ~10 minutes (was 8 hours!)
 
 ### Documentation
-- [SEMANTIC_SEARCH.md](./SEMANTIC_SEARCH.md)
-- [MULTI_COLLECTION_GUIDE.md](./MULTI_COLLECTION_GUIDE.md)
-- [FILE_WATCHER_GUIDE.md](./FILE_WATCHER_GUIDE.md)
-- [PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md)
+- [SEMANTIC_SEARCH.md](./../guides/SEMANTIC_SEARCH.md)
+- [MULTI_COLLECTION_GUIDE.md](./../guides/MULTI_COLLECTION_GUIDE.md)
+- [FILE_WATCHER_GUIDE.md](./../guides/FILE_WATCHER_GUIDE.md)
+- [PERFORMANCE_OPTIMIZATION.md](./../architecture/PERFORMANCE_OPTIMIZATION.md)
 
 ### Testing
 - 87 tests passing (76 unit + 11 integration)
