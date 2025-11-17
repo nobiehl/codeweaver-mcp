@@ -14,7 +14,7 @@ describe('MCPServer', () => {
 
   it('should have name and version', () => {
     expect(server.getName()).toBe('codeweaver');
-    expect(server.getVersion()).toBe('0.1.0');
+    expect(server.getVersion()).toBe('0.2.0');
   });
 
   it('should register tools', () => {
