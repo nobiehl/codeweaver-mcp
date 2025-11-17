@@ -6,17 +6,23 @@ export type SymbolKind =
   | 'package'
   | 'import'
   | 'class' | 'interface' | 'enum' | 'record' | 'annotation-type'
+  | 'type'  // TypeScript type alias
   | 'module'
+  | 'function'  // Top-level functions (TypeScript, JavaScript)
   | 'method' | 'constructor'
   | 'field' | 'enum-constant'
   | 'parameter' | 'local-variable'
-  | 'type-parameter';
+  | 'type-parameter'
+  | 'section'  // Markdown heading/section
+  | 'reference'  // Markdown link (local file reference)
+  | 'code-block';  // Markdown code example
 
 export type Modifier =
   | 'public' | 'protected' | 'private'
   | 'static' | 'final' | 'abstract' | 'native' | 'synchronized' | 'transient' | 'volatile'
   | 'strictfp' | 'default'
-  | 'sealed' | 'non-sealed';
+  | 'sealed' | 'non-sealed'
+  | 'readonly' | 'async';  // TypeScript/JavaScript modifiers
 
 export interface Location {
   path: string;
@@ -50,6 +56,7 @@ export interface SymbolDefinition {
   name: string;
   qualifiedName: string;
   location: Location;
+  language?: string;  // Source language (java, typescript, javascript, etc.) - optional for backward compatibility
   signature?: string;
   returnType?: TypeReference;
   parameters?: Parameter[];

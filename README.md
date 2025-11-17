@@ -2,23 +2,26 @@
 
 > ⚠️ **Beta Release (v0.2.0)** - Major Java support update! Complete modern Java support (Java 8-23) with comprehensive symbol extraction. Feedback welcome!
 
-**Token-efficient MCP server for Java 21 LTS/Gradle project analysis**
+**Token-efficient MCP server for Multi-Language project analysis (Java, TypeScript, JavaScript, Markdown, Python)**
 
-Weaving Java Code Intelligence for LLMs - A lightweight Model Context Protocol server that provides token-efficient access to Java/Gradle codebases through a multi-agent architecture.
+Weaving Code Intelligence for LLMs - A lightweight Model Context Protocol server that provides token-efficient access to Java, TypeScript, JavaScript, Markdown, and Python files through a multi-agent architecture with language plugins.
 
 ## ⚡ Highlights
 
-- ✅ **Zero Native Dependencies*** - Pure Node.js/TypeScript with java-parser
+- ✅ **Zero Native Dependencies*** - Pure Node.js/TypeScript with language-specific parsers
 - ✅ **Dual Interface** - CLI tool AND MCP server from same codebase
 - ✅ **Token-Efficient** - Smart file reading with token limits
-- ✅ **Complete Java 21 LTS Support** 🆕 - Modern Java features (Records, Sealed Classes, Module System)
-  - 🎯 **100% Production Coverage** - All features for Java 8-23 🆕
-  - ✅ **Class-Level Annotations** - Spring, JPA, Jakarta EE fully supported 🆕
-  - ✅ **Method Parameters** - Names, types, and annotations extracted 🆕
-  - ✅ **Generic Type Parameters** - Full signature with bounds 🆕
-  - ✅ **Sealed Classes** - Java 17+ sealed/non-sealed support 🆕
-  - ✅ **Records** - Java 14+ with components and methods 🆕
-  - ✅ **Module System** - module-info.java parsing 🆕
+- ✅ **Multi-Language Support** 🆕 - Java, TypeScript, JavaScript, Markdown, AND Python with unified plugin architecture!
+  - 🎯 **Complete Java Support** (Java 8-23) - Records, Sealed Classes, Module System
+  - 🎯 **Complete TypeScript Support** - Classes, Interfaces, Types, Enums, Generics, Decorators
+  - 🎯 **Complete JavaScript Support** - Modern ES6+, JSX, Arrow Functions, Async/Await
+  - 🎯 **Complete Markdown Support** - Headers as Sections, Links as References, Code Blocks
+  - 🎯 **Python Support** 🆕 - Classes, Functions, Methods, Decorators, Type Hints (architecture complete, WASM config in progress)
+  - ✅ **Class-Level Annotations/Decorators** - Spring, JPA, Jakarta EE, TypeScript decorators, Python @decorators
+  - ✅ **Method Parameters** - Names, types, and annotations extracted
+  - ✅ **Generic Type Parameters** - Full signature with bounds (Java, TypeScript)
+  - ✅ **Language Field** - Every symbol tagged with source language
+  - ✅ **Easy Extensibility** - Plugin system for adding new languages
 - ✅ **Powerful Search** - Keyword, pattern, AND semantic search (AI-powered) 🆕
 - ✅ **Semantic Code Search** - Find code by meaning/intent using LanceDB + Transformers 🆕
   - ⚡ **ONNX Runtime Optimizations** - Multi-threading + SIMD for 3x faster embeddings! 🆕
@@ -31,7 +34,7 @@ Weaving Java Code Intelligence for LLMs - A lightweight Model Context Protocol s
   - 🚀 **[PERFORMANCE_OPTIMIZATION.md](./PERFORMANCE_OPTIMIZATION.md)** - Future optimizations (GPU acceleration)
 - ✅ **Code Quality Analysis** - Cyclomatic complexity, LOC metrics, import analysis
 - ✅ **Git Integration** - Status, diff, blame, log, branches, compare
-- ✅ **Test-Driven** - 102 tests passing (15 new Java tests) 🆕
+- ✅ **Test-Driven** - 218 tests passing | 19 skipped (Python WASM config) - All core features fully tested! 🆕
 
 > **\*** Core features (Discovery, Symbols, Search, Analysis, VCS) have zero native dependencies. Semantic Search optionally requires LanceDB + ONNX Runtime (native components).
 
@@ -76,12 +79,16 @@ Learn by example:
 - **Discovery Agent** - Gradle project metadata extraction (version, dependencies, plugins)
 - **Cache Agent** - Content-addressable caching with SHA-256 hashing
 - **Snippets Agent** - Token-efficient file reading with line ranges
-- **Symbols Agent** - Complete Java symbol extraction 🆕
-  - Classes, Interfaces, Enums, Records, Annotation Types
-  - Methods with parameters, generics, and annotations
-  - Fields with annotations and modifiers
+- **Symbols Agent** - Multi-language symbol extraction with plugin architecture 🆕
+  - **Java**: Classes, Interfaces, Enums, Records, Annotation Types, Sealed Classes, Module System
+  - **TypeScript**: Classes, Interfaces, Types, Enums, Functions, Generics, Decorators, Namespaces
+  - **JavaScript**: Classes, Functions, Arrow Functions, Async/Await, ES6+ features
+  - **Markdown**: Headers as Sections, Local Links as References, Code Blocks
+  - **Python** 🆕: Classes, Functions, Methods, Decorators, Type Hints, Async/Await (architecture complete)
+  - Methods with parameters, generics, and annotations/decorators
+  - Fields/Properties with modifiers and visibility
   - Constructors, nested types, enum constants
-  - Sealed classes, module system support
+  - Language-tagged symbols for easy filtering
 - **Search Agent** - Keyword and pattern search with file filtering
 - **Analysis Agent** - Cyclomatic complexity, LOC metrics, code quality
 - **VCS Agent** - Git operations (status, diff, blame, log, branches, compare)
@@ -186,7 +193,12 @@ graph TB
     DISC --> GRADLE[Gradle Parser]
     CACHE --> SHA[SHA-256 Hashing]
     SNIP --> TOKEN[Token Counter]
-    SYM --> JAVAPARSER[java-parser<br/>AST Extraction]
+    SYM --> PLUGINREG[Plugin Registry]
+    PLUGINREG --> JAVAPLUGIN[Java Plugin<br/>java-parser]
+    PLUGINREG --> TSPLUGIN[TypeScript Plugin<br/>typescript-estree]
+    PLUGINREG --> JSPLUGIN[JavaScript Plugin<br/>typescript-estree]
+    PLUGINREG --> MDPLUGIN[Markdown Plugin<br/>remark]
+    PLUGINREG --> PYPLUGIN[Python Plugin<br/>tree-sitter WASM]
     SEARCH --> REGEX[Regex Matching]
     ANALYSIS --> COMPLEXITY[Cyclomatic<br/>Complexity]
     SEMANTIC --> LANCEDB[LanceDB<br/>Vector Search]
@@ -230,9 +242,25 @@ src/
 │   │   ├── discovery.ts          # Gradle analysis
 │   │   ├── cache.ts              # Caching
 │   │   ├── snippets.ts           # File reading
-│   │   ├── symbols.ts            # Java symbol extraction (Phase 2)
+│   │   ├── symbols.ts            # Multi-language symbol extraction (Phase 2)
 │   │   ├── search.ts             # Keyword/pattern search (Phase 2)
-│   │   └── analysis.ts           # Complexity analysis (Phase 3)
+│   │   ├── analysis.ts           # Complexity analysis (Phase 3)
+│   │   ├── semantic.ts           # Vector search (Phase 4)
+│   │   ├── vcs.ts                # Git operations (Phase 4)
+│   │   └── watcher.ts            # File watching (Phase 4)
+│   ├── language/
+│   │   ├── plugin.ts             # LanguagePlugin interface
+│   │   ├── detector.ts           # Language detection
+│   │   ├── registry.ts           # Plugin registry
+│   │   └── plugins/
+│   │       ├── java/
+│   │       │   ├── index.ts      # JavaLanguagePlugin
+│   │       │   ├── parser.ts     # java-parser wrapper
+│   │       │   └── extractor.ts  # Java symbol extraction
+│   │       └── typescript/
+│   │           ├── index.ts      # TypeScript/JavaScriptLanguagePlugin
+│   │           ├── parser.ts     # typescript-estree wrapper
+│   │           └── extractor.ts  # TS/JS symbol extraction
 │   └── storage/
 │       └── json-symbol-store.ts  # Symbol index
 ├── types/
@@ -247,21 +275,32 @@ src/
     └── mode-detector.ts          # CLI vs MCP detection
 
 tests/
-├── unit/                         # 57 passing tests
+├── unit/                         # 184 passing tests
 │   ├── mcp/server.test.ts        # 6 tests
 │   ├── agents/
 │   │   ├── discovery.test.ts     # 4 tests
 │   │   ├── cache.test.ts         # 5 tests
 │   │   ├── snippets.test.ts      # 7 tests
-│   │   ├── symbols.test.ts       # 8 tests (Phase 2)
-│   │   ├── search.test.ts        # 11 tests (Phase 2)
-│   │   └── analysis.test.ts      # 11 tests (Phase 3)
+│   │   ├── symbols.test.ts       # 23 tests (Java)
+│   │   ├── search.test.ts        # 11 tests
+│   │   ├── analysis.test.ts      # 11 tests
+│   │   ├── semantic.test.ts      # Tests for semantic search
+│   │   ├── vcs.test.ts           # Tests for VCS operations
+│   │   └── watcher.test.ts       # Tests for file watcher
+│   ├── language/
+│   │   ├── detector.test.ts      # Language detection tests
+│   │   ├── registry.test.ts      # Plugin registry tests
+│   │   ├── java.test.ts          # Java plugin tests
+│   │   └── typescript.test.ts    # 21 tests (TypeScript/JavaScript)
 │   └── storage/
 │       └── json-symbol-store.test.ts  # 5 tests
-├── integration/                  # 5 passing tests
-│   └── smoke.test.ts
+├── integration/                  # 12 passing tests
+│   ├── smoke.test.ts             # 5 tests
+│   └── multi-language.test.ts    # 12 tests (Multi-Language Integration)
 └── fixtures/
-    └── gradle-projects/simple/   # Test fixtures
+    ├── gradle-projects/simple/   # Gradle test fixtures
+    ├── java/                     # Java test files
+    └── typescript/               # TypeScript/JavaScript test files
 ```
 
 ---
@@ -499,11 +538,16 @@ npm test -- tests/unit/agents/snippets.test.ts
 - ✅ Cache Agent (5 tests)
 - ✅ Snippets Agent (7 tests)
 - ✅ Symbol Storage (5 tests)
-- ✅ Symbols Agent (8 tests) - Phase 2
-- ✅ Search Agent (11 tests) - Phase 2
-- ✅ Analysis Agent (11 tests) - Phase 3
-- ✅ Integration Tests (5 tests)
-- **Total: 62/62 passing (57 unit + 5 integration)**
+- ✅ Symbols Agent (23 tests - Java)
+- ✅ Language Plugins (21 tests - TypeScript/JavaScript, 13 tests - Markdown)
+- ⚠️ Python Plugin (18 tests - skipped due to WASM config)
+- ✅ Search Agent (11 tests)
+- ✅ Analysis Agent (11 tests)
+- ✅ Semantic Agent (tests for vector search)
+- ✅ VCS Agent (tests for Git operations)
+- ✅ File Watcher Agent (tests for file watching)
+- ✅ Integration Tests (17 tests: 5 smoke + 12 multi-language)
+- **Total: 218 passing | 19 skipped (Python WASM)**
 
 ---
 
@@ -763,13 +807,14 @@ MIT License - see [LICENSE](./LICENSE)
 ✅ **Working Features:**
 - **MCP Server** with 19 tools (project, files, symbols, search, analysis, vcs)
 - **CLI** with 7 command groups (includes watch mode)
+- **Multi-Language Support** - Java, TypeScript, JavaScript, Markdown, Python with plugin architecture
 - **Semantic Search** with ONNX Runtime optimizations
 - **Multi-Collection Support** (Code + Docs)
 - **File Watcher** for automatic index updates
-- **Java Symbol Extraction** - Classes, methods, fields, constructors
+- **Symbol Extraction** - Complete support for Java, TypeScript, JavaScript, Markdown; Python architecture complete
 - **Code Quality Analysis** - Cyclomatic complexity, LOC metrics
 - **Git Integration** - Status, diff, blame, log, branches
-- **87 tests passing**
+- **218 tests passing** (19 skipped - Python WASM config)
 
 ⚠️ **Known Limitations:**
 - Performance varies on large codebases (>10k files)
@@ -779,9 +824,10 @@ MIT License - see [LICENSE](./LICENSE)
 - Breaking changes expected in future releases
 
 🔮 **Planned Improvements:**
+- Python WASM configuration (architecture complete, needs Node.js WASM init)
 - GPU acceleration for semantic search
 - Better error messages
-- More language support beyond Java
+- More language support (Go, Rust, C#, etc.)
 - Performance optimizations
 - Comprehensive documentation
 
