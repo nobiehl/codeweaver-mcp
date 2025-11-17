@@ -1,6 +1,6 @@
 # CodeWeaver 🕸️
 
-> ⚠️ **Beta Release (v0.2.0)** - Major Java support update! Complete modern Java support (Java 8-23) with comprehensive symbol extraction. Feedback welcome!
+> ⚠️ **Beta Release (v0.3.0)** - Multi-Language Plugin Architecture! Complete Python support, plugin system for all languages, and comprehensive documentation audit. Feedback welcome!
 
 **Token-efficient MCP server for Multi-Language project analysis (Java, TypeScript, JavaScript, Markdown, Python)**
 

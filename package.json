@@ -1,7 +1,7 @@
 {
   "name": "codeweaver-mcp",
-  "version": "0.2.0",
-  "description": "Token-efficient MCP server for code analysis with semantic search, Java/Gradle support, and multi-agent architecture",
+  "version": "0.3.0",
+  "description": "Token-efficient MCP server for multi-language code analysis (Java, TypeScript, JavaScript, Markdown, Python) with semantic search and plugin architecture",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {

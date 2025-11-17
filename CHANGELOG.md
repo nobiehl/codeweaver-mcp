@@ -7,6 +7,135 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-11-17
+
+**Multi-Language Plugin Architecture + Python Support + Documentation Audit** 🎉
+
+Complete multi-language support with unified plugin architecture and comprehensive documentation overhaul.
+
+### Added
+
+#### 🐍 Python Language Support
+- **Complete Python Symbol Extraction**
+  - Classes, Functions, Methods with full parameter extraction
+  - Decorators (`@decorator`, `@staticmethod`, `@classmethod`, `@property`)
+  - Type Hints (Python 3.5+: `def func(x: int) -> str`)
+  - Async/Await support (`async def`, `await`)
+  - Visibility detection (`_protected`, `__private`, `public`)
+  - Constructors (`__init__`) and special methods
+  - Language field tagging (`'python'`)
+- **WASM-based Parser** - tree-sitter-wasms + web-tree-sitter (zero native deps)
+- **18 Python Tests** - All passing, comprehensive fixtures
+
+#### 🏗️ Multi-Language Plugin Architecture
+- **Plugin System** - Unified interface for all language parsers
+  - `LanguagePlugin` base class with `parse()`, `extractSymbols()`, `validate()`
+  - `LanguagePluginRegistry` - Central management of all plugins
+  - `LanguageDetector` - File extension-based language detection
+- **5 Language Plugins** (13 new files, 3,606 LOC)
+  - Java Plugin (1,383 LOC) - Refactored from SymbolsAgent
+  - TypeScript/JavaScript Plugin (964 LOC) - Unified TS/JS support
+  - Markdown Plugin (316 LOC) - Headers as sections, links as references
+  - Python Plugin (643 LOC) - Complete Python 3.x support
+  - Easy extensibility for new languages
+- **Backward Compatible** - `language` field optional, all existing code works
+
+#### 📋 Documentation Audit & Improvements
+- **AUDIT_REPORT.md** (349 lines) - Complete documentation audit
+  - 102 files analyzed (20 docs, 49 source, 19 tests, 3 configs)
+  - 8 parallel checks (Links, Markdown, Version, Content, Sync, JSDoc, Secrets, Cross-Refs)
+  - Grade: **B+ (Very Good)** - All critical issues fixed
+  - 88% valid production links (broken links were test fixtures)
+- **PRODUCTION_READINESS.md** (373 lines) - Production-readiness matrix
+  - Clear feature status (Production-Ready vs Beta vs Experimental)
+  - Performance expectations for different project sizes
+  - Native dependencies breakdown (Core vs Optional)
+- **CLAUDE.md** (664 lines) - Comprehensive developer documentation
+  - Complete build & development guide
+  - Multi-language plugin architecture documentation
+  - Test-driven development guidelines
+  - Troubleshooting section
+
+#### 🧪 Test Suite Expansion
+- **+135 New Tests** (102 → 237 tests, +132% increase!)
+  - 18 Python unit tests
+  - 35 Language Detector tests
+  - 31 Registry tests
+  - 21 TypeScript tests
+  - 13 Markdown tests
+  - 17 Multi-language integration tests
+- **5 New Test Files** - Comprehensive coverage
+- **237/237 Tests Passing** ✅
+
+### Changed
+- **Refactored SymbolsAgent** - Extracted 1,271 LOC into plugin architecture
+  - Now orchestrates plugins instead of direct parsing
+  - Cleaner separation of concerns
+  - Easier to maintain and extend
+- **Enhanced README.md** - Python support details, updated highlights
+- **Updated docs/** - ARCHITECTURE.md, USAGE.md with plugin system info
+
+### Fixed
+- **Version Consistency** - Updated `src/mcp/server.ts` from 0.1.0 to 0.2.0
+- **Broken Anchor Links** - Fixed 2 links in `docs/README.md`
+  - Removed emoji prefixes from markdown anchor slugs
+  - `#-übersicht-was-fehlt` → `#übersicht-was-fehlt`
+- **Documentation Accuracy** - Aligned docs with code reality
+  - Production-readiness transparency
+  - Native dependencies clarification
+  - Feature status accuracy
+
+### Technical Details
+
+**Dependencies Added:**
+```json
+"tree-sitter-wasms": "^0.1.13",
+"web-tree-sitter": "^0.25.10",
+"@types/mdast": "^4.0.4"
+```
+
+**Code Statistics:**
+- +11,244 lines added
+- -1,281 lines removed
+- 45 files changed
+- Net: +9,963 lines
+
+**Architecture:**
+```
+src/core/language/
+├── detector.ts (266 LOC)     # Language detection
+├── plugin.ts (276 LOC)       # Plugin interface
+├── registry.ts (360 LOC)     # Plugin management
+└── plugins/
+    ├── java/ (1,383 LOC)
+    ├── typescript/ (964 LOC)
+    ├── markdown/ (316 LOC)
+    └── python/ (643 LOC)
+```
+
+### Supported Languages
+
+| Language   | Status | Tests | Features |
+|------------|--------|-------|----------|
+| Java       | ✅ Production | 23 | Java 8-23, Annotations, Sealed Classes, Records, Module System |
+| TypeScript | ✅ Production | 21 | Generics, Decorators, Interfaces, Types, Enums |
+| JavaScript | ✅ Production | 21 | Modern ES6+, JSX, Arrow Functions, Async/Await |
+| Markdown   | ✅ Production | 13 | Headers as Sections, Links, Code Blocks |
+| Python     | ✅ Production | 18 | Classes, Functions, Decorators, Type Hints, Async/Await |
+
+### Tests
+- **Test Files:** 18 passing (was 13, +38%)
+- **Tests:** 237 passing (was 102, +132%)
+- **Duration:** ~25 seconds
+- **Coverage:** Multi-language, Integration, Unit
+
+### Breaking Changes
+**None!** All changes are backward-compatible.
+
+### Migration Guide
+No migration needed - all existing code continues to work.
+The `language` field in `SymbolDefinition` is optional for backward compatibility.
+
 ## [0.2.0] - 2025-11-16
 
 **Major Java Support Release** 🎉
