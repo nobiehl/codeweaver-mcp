@@ -63,3 +63,7 @@ lancedb/
 
 # Test projects (embedded repos)
 tests/markdown-editor-showcase/
+.test-repo-*/
+
+# Analysis artifacts (temporary)
+.analysis/

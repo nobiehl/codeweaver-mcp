@@ -1,6 +1,6 @@
 # CodeWeaver 🕸️
 
-> ⚠️ **Beta Release (v0.3.0)** - Multi-Language Plugin Architecture! Complete Python support, plugin system for all languages, and comprehensive documentation audit. Feedback welcome!
+> ⚠️ **Beta Release (v0.4.0)** - System Health Checks & Dependency Validation! Auto-check dependencies on startup with new `doctor` command. Removed deprecated Discovery Agent for cleaner codebase. Feedback welcome!
 
 **Token-efficient MCP server for Multi-Language project analysis (Java, TypeScript, JavaScript, Markdown, Python)**
 
@@ -16,7 +16,7 @@ Weaving Code Intelligence for LLMs - A lightweight Model Context Protocol server
   - 🎯 **Complete TypeScript Support** - Classes, Interfaces, Types, Enums, Generics, Decorators
   - 🎯 **Complete JavaScript Support** - Modern ES6+, JSX, Arrow Functions, Async/Await
   - 🎯 **Complete Markdown Support** - Headers as Sections, Links as References, Code Blocks
-  - 🎯 **Python Support** 🆕 - Classes, Functions, Methods, Decorators, Type Hints (architecture complete, WASM config in progress)
+  - 🎯 **Complete Python Support** 🆕 - Classes, Functions, Methods, Decorators, Type Hints, Async/Await
   - ✅ **Class-Level Annotations/Decorators** - Spring, JPA, Jakarta EE, TypeScript decorators, Python @decorators
   - ✅ **Method Parameters** - Names, types, and annotations extracted
   - ✅ **Generic Type Parameters** - Full signature with bounds (Java, TypeScript)
@@ -34,7 +34,7 @@ Weaving Code Intelligence for LLMs - A lightweight Model Context Protocol server
   - 🚀 **[PERFORMANCE_OPTIMIZATION.md](./docs/architecture/PERFORMANCE_OPTIMIZATION.md)** - Future optimizations (GPU acceleration)
 - ✅ **Code Quality Analysis** - Cyclomatic complexity, LOC metrics, import analysis
 - ✅ **Git Integration** - Status, diff, blame, log, branches, compare
-- ✅ **Test-Driven** - 218 tests passing | 19 skipped (Python WASM config) - All core features fully tested! 🆕
+- ✅ **Test-Driven** - 256 tests passing (100%) - All features fully tested! 🆕
 
 > **\*** Core features (Discovery, Symbols, Search, Analysis, VCS) have zero native dependencies. Semantic Search optionally requires LanceDB + ONNX Runtime (native components).
 
@@ -84,7 +84,17 @@ npm run dev -- --mcp
 ### ✅ Implemented
 
 **Agents:**
-- **Discovery Agent** - Gradle project metadata extraction (version, dependencies, plugins)
+- **Project Metadata Agent** 🆕 - Multi-language project metadata extraction with plugin architecture
+  - **Gradle**: Java version, dependencies, plugins, modules
+  - **npm**: TypeScript/JavaScript, package manager detection, scripts, workspaces
+  - **Auto-detection**: Automatically detects project type(s)
+  - **Unified Schema**: Language-agnostic metadata format
+  - **Extensible**: Easy to add new build systems (pip, Maven, Cargo, etc.)
+- **System Check Agent** 🆕 - Dependency validation and system health checks
+  - **Critical**: Node.js (>=18), Git (>=2.0) - required for core features
+  - **Optional**: Python (>=3.8), Gradle (>=7.0), Maven (>=3.6)
+  - **Auto-check**: Quick startup validation in CLI mode
+  - **Doctor Command**: Full system diagnostic with recommendations
 - **Cache Agent** - Content-addressable caching with SHA-256 hashing
 - **Snippets Agent** - Token-efficient file reading with line ranges
 - **Symbols Agent** - Multi-language symbol extraction with plugin architecture 🆕
@@ -92,7 +102,7 @@ npm run dev -- --mcp
   - **TypeScript**: Classes, Interfaces, Types, Enums, Functions, Generics, Decorators, Namespaces
   - **JavaScript**: Classes, Functions, Arrow Functions, Async/Await, ES6+ features
   - **Markdown**: Headers as Sections, Local Links as References, Code Blocks
-  - **Python** 🆕: Classes, Functions, Methods, Decorators, Type Hints, Async/Await (architecture complete)
+  - **Python** 🆕: Classes, Functions, Methods, Decorators, Type Hints, Async/Await
   - Methods with parameters, generics, and annotations/decorators
   - Fields/Properties with modifiers and visibility
   - Constructors, nested types, enum constants
@@ -107,7 +117,9 @@ npm run dev -- --mcp
 **MCP Tools (19 total):**
 
 *File & Project:*
-- `project.meta` - Get project metadata (Java version, modules, dependencies)
+- `project.meta` - Get unified project metadata (auto-detects: Gradle, npm, pip, Maven, etc.)
+  - Multi-language support with plugin architecture
+  - Optional `projectType` parameter for specific extraction
 - `file.read` - Read file with optional token limit (default: 10000)
 - `file.readRange` - Read specific line ranges (1-indexed, inclusive)
 - `file.readWithNumbers` - Read file with line numbers for reference
@@ -133,6 +145,9 @@ npm run dev -- --mcp
 - `vcs.log` - Get commit history
 - `vcs.branches` - Get list of all branches
 - `vcs.compare` - Compare two branches
+
+*System:*
+- `system.check` - Check system dependencies (planned for MCP integration)
 
 **CLI Commands:**
 
@@ -168,6 +183,10 @@ npm run dev -- --mcp
 
 *File Watching:* 🆕
 - `codeweaver watch [--debounce N] [--code-only] [--docs-only]` - Watch files and auto-update index
+
+*System Check:* 🆕
+- `codeweaver doctor` - Check system dependencies (Node.js, Git, Python, Gradle, Maven)
+- `codeweaver doctor --quick` - Quick check (only critical dependencies)
 
 **Infrastructure:**
 - Auto-detection (stdio = MCP mode, TTY = CLI mode)
@@ -555,7 +574,7 @@ npm test -- tests/unit/agents/snippets.test.ts
 - ✅ VCS Agent (tests for Git operations)
 - ✅ File Watcher Agent (tests for file watching)
 - ✅ Integration Tests (17 tests: 5 smoke + 12 multi-language)
-- **Total: 218 passing | 19 skipped (Python WASM)**
+- **Total: 256 passing (100%)**
 
 ---
 
@@ -598,7 +617,17 @@ npm test                # Run tests (watch mode)
 npm run lint            # ESLint
 npm run format          # Prettier
 npm run clean           # Remove dist & cache
+npm run validate-links  # Validate markdown links 🆕
 ```
+
+**Documentation Tools**:
+```bash
+npm run validate-links           # Validate internal links (~2s)
+npm run validate-links:external  # Include external links (~30s)
+npm run validate-links:verbose   # Detailed output
+```
+
+See [LINK_VALIDATION.md](./docs/development/LINK_VALIDATION.md) for details.
 
 ---
 
@@ -817,10 +846,10 @@ MIT License - see [LICENSE](./LICENSE)
 - **Semantic Search** with ONNX Runtime optimizations
 - **Multi-Collection Support** (Code + Docs)
 - **File Watcher** for automatic index updates
-- **Symbol Extraction** - Complete support for Java, TypeScript, JavaScript, Markdown; Python architecture complete
+- **Symbol Extraction** - Complete support for Java, TypeScript, JavaScript, Markdown, and Python
 - **Code Quality Analysis** - Cyclomatic complexity, LOC metrics
 - **Git Integration** - Status, diff, blame, log, branches
-- **218 tests passing** (19 skipped - Python WASM config)
+- **256 tests passing** (100% - all features tested)
 
 ⚠️ **Known Limitations:**
 - Performance varies on large codebases (>10k files)
@@ -830,7 +859,7 @@ MIT License - see [LICENSE](./LICENSE)
 - Breaking changes expected in future releases
 
 🔮 **Planned Improvements:**
-- Python WASM configuration (architecture complete, needs Node.js WASM init)
+- ~~Python WASM configuration~~ ✅ COMPLETED
 - GPU acceleration for semantic search
 - Better error messages
 - More language support (Go, Rust, C#, etc.)

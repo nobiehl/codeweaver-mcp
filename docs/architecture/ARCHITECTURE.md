@@ -14,6 +14,7 @@
 
 ---
 
+<a id="übersicht"></a>
 ## 🎯 Übersicht
 
 CodeWeaver ist ein leichtgewichtiger **Model Context Protocol (MCP) Server** für Java/Gradle-Projekte.
@@ -23,7 +24,7 @@ CodeWeaver ist ein leichtgewichtiger **Model Context Protocol (MCP) Server** fü
 1. **Token Efficiency First** - Niemals ganze Files, nur geziel Snippets
 2. **Zero Native Dependencies** - Pure Node.js/TypeScript
 3. **Dual Interface** - CLI + MCP Server aus gleicher Codebasis
-4. **Multi-Agent System** - 7 spezialisierte Agents
+4. **Multi-Agent System** - 9 spezialisierte Agents
 5. **Test-Driven** - 73 Tests, 100% passing
 
 ### High-Level Architektur
@@ -78,29 +79,32 @@ export function isMCPMode(): boolean {
 
 | # | Agent | Zweck | Status |
 |---|-------|-------|--------|
-| 1 | **Discovery** | Gradle-Metadaten auslesen | ✅ Phase 1 |
+| 1 | **Project Metadata** | Multi-Language Metadaten (Gradle, npm, etc.) | ✅ Phase 1 |
 | 2 | **Cache** | Content-addressable Caching | ✅ Phase 1 |
 | 3 | **Snippets** | Token-effizientes File-Reading | ✅ Phase 1 |
-| 4 | **Symbols** | Java Symbol-Extraktion | ✅ Phase 2 |
+| 4 | **Symbols** | Multi-Language Symbol-Extraktion | ✅ Phase 2 |
 | 5 | **Search** | Keyword/Pattern-Suche | ✅ Phase 2 |
 | 6 | **Analysis** | Complexity & Metrics | ✅ Phase 3 |
 | 7 | **VCS** | Git-Operationen | ✅ Phase 4 |
+| 8 | **Semantic Index** | LanceDB Vector Search | ✅ Phase 4 |
+| 9 | **File Watcher** | Automatic Index Updates | ✅ Phase 4 |
 
 ### Shared Core Service
 
 **Zentrale Business Logic** (`src/core/service.ts`):
 ```typescript
 export class CodeWeaverService {
-  private discoveryAgent: DiscoveryAgent;
+  private projectMetadataAgent: ProjectMetadataAgent;
   private cacheAgent: CacheAgent;
   private snippetsAgent: SnippetsAgent;
   private symbolsAgent: SymbolsAgent;
   private searchAgent: SearchAgent;
   private analysisAgent: AnalysisAgent;
   private vcsAgent: VCSAgent;
+  private semanticAgent: SemanticIndexAgent;
 
   // Beide Interfaces (CLI + MCP) nutzen diese Methoden:
-  async getProjectMetadata(): Promise<ProjectMetadata> { ... }
+  async getUnifiedProjectMetadata(): Promise<UnifiedProjectMetadata | null> { ... }
   async buildIndex(): Promise<IndexStats> { ... }
   async searchKeyword(query: string): Promise<SearchResult[]> { ... }
   async analyzeFile(path: string): Promise<AnalysisReport> { ... }
@@ -167,13 +171,15 @@ src/
 ├── core/
 │   ├── service.ts                # Shared business logic
 │   ├── agents/
-│   │   ├── discovery.ts          # Gradle analysis
+│   │   ├── projectMetadata.ts    # Multi-language project metadata
 │   │   ├── cache.ts              # Caching
 │   │   ├── snippets.ts           # File reading
-│   │   ├── symbols.ts            # Java symbol extraction
+│   │   ├── symbols.ts            # Multi-language symbol extraction
 │   │   ├── search.ts             # Keyword/pattern search
 │   │   ├── analysis.ts           # Complexity analysis
-│   │   └── vcs.ts                # Git operations
+│   │   ├── vcs.ts                # Git operations
+│   │   ├── semantic.ts           # LanceDB vector search
+│   │   └── watcher.ts            # File watcher
 │   └── storage/
 │       └── json-symbol-store.ts  # Symbol index
 ├── types/
@@ -229,7 +235,7 @@ LLM ← JSON Response ← MCP Handler ← Results ← ← ← ← ← ← ←
 - **Test Success Rate**: 100% ✅
 - **MCP Tools**: 19
 - **CLI Commands**: 7 Groups, 20+ Commands
-- **Agents**: 9 implementiert (alle geplanten Agents fertig!)
+- **Agents**: 9 implementiert (Project Metadata, Cache, Snippets, Symbols, Search, Analysis, VCS, Semantic Index, File Watcher)
 - **Dependencies**: 100% Pure Node.js
 
 ---

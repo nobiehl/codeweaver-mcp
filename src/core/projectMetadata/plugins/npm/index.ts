@@ -12,8 +12,6 @@ import type {
   UnifiedProjectMetadata,
   UnifiedDependency,
   UnifiedModule,
-  DependencyScope,
-  ProjectMetadataPluginConfig,
 } from '../../../../types/projectMetadata.js';
 import type { Language } from '../../../../types/language.js';
 
@@ -44,16 +42,13 @@ export class NpmMetadataPlugin implements ProjectMetadataPlugin {
     }
   }
 
-  async extract(
-    projectRoot: string,
-    config?: ProjectMetadataPluginConfig,
-  ): Promise<UnifiedProjectMetadata> {
+  async extract(projectRoot: string): Promise<UnifiedProjectMetadata> {
     const packageJson = await this.readPackageJson(projectRoot);
 
     const name = packageJson.name || 'unknown';
     const version = packageJson.version || '0.0.0';
-    const dependencies = this.extractDependencies(packageJson, config);
-    const devDependencies = this.extractDevDependencies(packageJson, config);
+    const dependencies = this.extractDependencies(packageJson);
+    const devDependencies = this.extractDevDependencies(packageJson);
     const scripts = packageJson.scripts || {};
     const modules = await this.extractWorkspaces(projectRoot, packageJson);
 
@@ -100,7 +95,7 @@ export class NpmMetadataPlugin implements ProjectMetadataPlugin {
     const scripts: Record<string, string> = {};
 
     if (packageJson.scripts) {
-      for (const [name, command] of Object.entries(packageJson.scripts)) {
+      for (const name of Object.keys(packageJson.scripts)) {
         scripts[name] = `${packageManager} run ${name}`;
       }
     }
@@ -151,10 +146,7 @@ export class NpmMetadataPlugin implements ProjectMetadataPlugin {
     return 'npm'; // Default
   }
 
-  private extractDependencies(
-    packageJson: PackageJson,
-    config?: ProjectMetadataPluginConfig,
-  ): UnifiedDependency[] {
+  private extractDependencies(packageJson: PackageJson): UnifiedDependency[] {
     const deps: UnifiedDependency[] = [];
 
     // Runtime dependencies
@@ -169,7 +161,7 @@ export class NpmMetadataPlugin implements ProjectMetadataPlugin {
     }
 
     // Peer dependencies
-    if (packageJson.peerDependencies && config?.includeDevDependencies) {
+    if (packageJson.peerDependencies) {
       for (const [name, version] of Object.entries(packageJson.peerDependencies)) {
         deps.push({
           name,
@@ -193,12 +185,8 @@ export class NpmMetadataPlugin implements ProjectMetadataPlugin {
     return deps;
   }
 
-  private extractDevDependencies(
-    packageJson: PackageJson,
-    config?: ProjectMetadataPluginConfig,
-  ): UnifiedDependency[] {
+  private extractDevDependencies(packageJson: PackageJson): UnifiedDependency[] {
     if (!packageJson.devDependencies) return [];
-    if (config?.includeDevDependencies === false) return [];
 
     const devDeps: UnifiedDependency[] = [];
 
@@ -213,10 +201,7 @@ export class NpmMetadataPlugin implements ProjectMetadataPlugin {
     return devDeps;
   }
 
-  private async extractWorkspaces(
-    projectRoot: string,
-    packageJson: PackageJson,
-  ): Promise<UnifiedModule[]> {
+  private async extractWorkspaces(_projectRoot: string, packageJson: PackageJson): Promise<UnifiedModule[]> {
     const modules: UnifiedModule[] = [];
 
     // Root module

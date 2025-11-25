@@ -9,6 +9,7 @@ import { createSearchCommand } from './commands/search.js';
 import { createAnalysisCommand } from './commands/analysis.js';
 import { createVCSCommand } from './commands/vcs.js';
 import { createWatchCommand } from './commands/watch.js';
+import { createDoctorCommand } from './commands/doctor.js';
 
 export async function startCLI() {
   const program = new Command();
@@ -29,6 +30,7 @@ export async function startCLI() {
   program.addCommand(createAnalysisCommand(service));
   program.addCommand(createVCSCommand(service));
   program.addCommand(createWatchCommand(service)); // NEW: File Watcher
+  program.addCommand(createDoctorCommand()); // NEW: System Check
 
   // Parse & Execute
   await program.parseAsync(process.argv);

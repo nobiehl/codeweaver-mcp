@@ -18,6 +18,7 @@ Vollständige Anleitung für CLI-Befehle und MCP-Tools.
 
 ---
 
+<a id="installation--setup"></a>
 ## 🚀 Installation & Setup
 
 ### Voraussetzungen
@@ -814,6 +815,7 @@ codeweaver analysis complexity src/main/java/ChangedFile.java
 
 ---
 
+<a id="tipps--tricks"></a>
 ## 🎯 Tipps & Tricks
 
 ### 1. Shell-Aliase einrichten

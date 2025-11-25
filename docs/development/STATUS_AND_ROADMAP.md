@@ -1,27 +1,29 @@
 # Fehlende Features & Priorisierung - CodeWeaver
 
 **Erstellt**: 2025-11-14
-**Status**: Phase 1-4 Complete (78% der ursprünglichen Planung)
+**Letzte Aktualisierung**: 2025-11-18
+**Status**: Phase 1-4 Complete (89% der ursprünglichen Planung - 10 von 11 Agents)
 
 ---
 
 ## 📊 Übersicht: Was fehlt?
 
-Von ursprünglich **9 geplanten Agents** sind **7 implementiert** (78%).
+Von ursprünglich **9 geplanten Agents** sind **8 implementiert** (89%).
 
 ### ✅ Implementiert (Phase 1-4)
-1. Discovery Agent - Gradle Metadaten ✅
+1. **Project Metadata Agent** - Multi-Language Metadaten (Gradle, npm) ✅
 2. Cache Agent - Content-addressable Caching ✅
 3. Snippets Agent - Token-effizientes File-Reading ✅
-4. Symbols Agent - Java Symbol-Extraktion ✅
+4. Symbols Agent - Multi-Language Symbol-Extraktion ✅
 5. Search Agent - Keyword/Pattern-Suche ✅
 6. Analysis Agent - Complexity & Metrics ✅
 7. VCS Agent - Git-Operationen ✅
+8. Semantic Index Agent - LanceDB Vector Search ✅
+9. File Watcher Agent - Automatic Index Updates ✅
 
 ### ❌ Nicht implementiert
-8. **Index Agent** (LanceDB Semantic Search)
-9. **Orchestrator Agent** (Pipeline-Koordination)
-10. **Static Analysis Tools** (SpotBugs, Checkstyle, PMD)
+- **Orchestrator Agent** (Pipeline-Koordination mit DAG)
+- **Static Analysis Tools** (SpotBugs, Checkstyle, PMD Integration)
 
 ---
 

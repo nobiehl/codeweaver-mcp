@@ -8,9 +8,169 @@ Dieses Dokument spezifiziert alle Datenstrukturen, Index-Schemata und Persistenz
 
 ## 1. Projekt-Metadaten
 
-### 1.1 ProjectMetadata
+### 1.1 UnifiedProjectMetadata (NEU - Multi-Language)
 
-Haupt-Struktur für Projekt-Informationen (von Discovery Agent erzeugt).
+**Status**: ✅ Production-Ready (v0.3.1+)
+
+Einheitliche Struktur für Multi-Language Projekt-Informationen (von Project Metadata Agent erzeugt).
+
+```typescript
+interface UnifiedProjectMetadata {
+  // Identifikation
+  root: string;                              // Absoluter Pfad zur Projektwurzel
+  name: string;                              // Projektname
+  version?: string;                          // Projekt-Version
+
+  // Projekt-Typ & Build-System
+  projectType: ProjectType;                  // 'gradle' | 'npm' | 'pip' | 'maven' | 'cargo' | ...
+  languages: Language[];                     // ['java', 'kotlin'] oder ['typescript', 'javascript']
+  buildTool: string;                         // 'Gradle', 'npm', 'yarn', 'pnpm', 'Maven', etc.
+
+  // Dependencies (Unified Schema)
+  dependencies: UnifiedDependency[];         // Runtime dependencies
+  devDependencies?: UnifiedDependency[];     // Development dependencies
+
+  // Scripts & Tasks
+  scripts?: Record<string, string>;          // Build-Scripts (npm scripts, gradle tasks)
+
+  // Module/Subprojects
+  modules?: UnifiedModule[];                 // Multi-Module-Projekte
+
+  // Zusätzliche Metadaten (projekt-spezifisch)
+  metadata?: Record<string, unknown>;        // Flexible für spezifische Felder
+
+  // Timestamps
+  discoveredAt: Date;
+  lastModified: Date;
+}
+
+// Project Types (erweiterbar)
+type ProjectType =
+  | 'gradle'      // Java, Kotlin (Gradle)
+  | 'maven'       // Java (Maven)
+  | 'npm'         // TypeScript, JavaScript (npm/yarn/pnpm/bun)
+  | 'pip'         // Python (pip)
+  | 'cargo'       // Rust (Cargo)
+  | 'composer'    // PHP (Composer)
+  | 'nuget'       // C# (.NET)
+  | 'go-mod'      // Go (Go Modules)
+  | 'ruby-gem'    // Ruby (RubyGems)
+  | 'multi'       // Mehrere Projekttypen
+  | 'unknown';    // Unbekannt
+
+// Languages
+type Language =
+  | 'java' | 'kotlin' | 'scala' | 'groovy'           // JVM
+  | 'typescript' | 'javascript'                       // JavaScript/TypeScript
+  | 'python'                                          // Python
+  | 'rust' | 'go' | 'c' | 'cpp' | 'csharp'          // Systems
+  | 'php' | 'ruby' | 'perl'                          // Scripting
+  | 'unknown';
+
+// Unified Dependency (language-agnostic)
+interface UnifiedDependency {
+  group?: string;                            // Maven group / npm org (z.B. '@types')
+  name: string;                              // Artifact/Package name
+  version: string;                           // Version (z.B. '1.0.0', '^4.18.2')
+  scope: DependencyScope;                    // 'runtime' | 'dev' | 'test' | 'peer' | ...
+}
+
+type DependencyScope =
+  | 'runtime'     // Production runtime dependency
+  | 'dev'         // Development-only
+  | 'test'        // Testing-only
+  | 'peer'        // Peer dependency (npm)
+  | 'optional'    // Optional dependency
+  | 'provided'    // Provided by container (Java)
+  | 'compile';    // Compile-time only
+
+// Unified Module
+interface UnifiedModule {
+  name: string;                              // Modul-Name
+  path: string;                              // Relativer Pfad
+  type: 'root' | 'subproject' | 'workspace'; // Modul-Typ
+  dependencies?: UnifiedDependency[];        // Modul-spezifische Dependencies
+}
+```
+
+**Plugin Architecture:**
+
+```typescript
+interface ProjectMetadataPlugin {
+  readonly name: string;                     // Plugin-Name (z.B. 'gradle', 'npm')
+  readonly projectType: ProjectType;
+  readonly languages: Language[];
+
+  // Detection
+  detect(projectRoot: string): Promise<boolean>;
+
+  // Extraction
+  extract(projectRoot: string): Promise<UnifiedProjectMetadata>;
+
+  // Optional: Scripts & Dependency Tree
+  getScripts?(projectRoot: string): Promise<Record<string, string>>;
+  getDependencyTree?(projectRoot: string): Promise<DependencyTree>;
+}
+```
+
+**Beispiele:**
+
+```typescript
+// Gradle-Projekt
+{
+  root: '/path/to/project',
+  name: 'my-app',
+  version: '1.0.0',
+  projectType: 'gradle',
+  languages: ['java', 'kotlin'],
+  buildTool: 'Gradle',
+  dependencies: [
+    { group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.2.0', scope: 'runtime' }
+  ],
+  metadata: {
+    gradleVersion: '8.5',
+    javaVersion: '21'
+  }
+}
+
+// npm-Projekt
+{
+  root: '/path/to/project',
+  name: 'my-frontend',
+  version: '2.0.0',
+  projectType: 'npm',
+  languages: ['typescript', 'javascript'],
+  buildTool: 'yarn',
+  dependencies: [
+    { name: 'react', version: '18.2.0', scope: 'runtime' },
+    { name: 'express', version: '4.18.2', scope: 'runtime' }
+  ],
+  devDependencies: [
+    { name: 'typescript', version: '5.0.0', scope: 'dev' },
+    { name: 'vitest', version: '1.0.0', scope: 'dev' }
+  ],
+  scripts: {
+    build: 'yarn run build',
+    test: 'yarn run test',
+    dev: 'yarn run dev'
+  },
+  metadata: {
+    packageManager: 'yarn',
+    nodeVersion: '>=20.0.0',
+    hasTypeScript: true
+  }
+}
+```
+
+---
+
+### 1.2 ProjectMetadata (DEPRECATED - Legacy Gradle)
+
+**Status**: ⚠️ Deprecated (Removed in v0.3.0+)
+
+Legacy-Struktur für Gradle-spezifische Projekt-Informationen.
+
+**⚠️ Hinweis**: Nutze `UnifiedProjectMetadata` (siehe Section 1.1) für alle neuen Implementierungen!
 
 ```typescript
 interface ProjectMetadata {
@@ -44,7 +204,9 @@ interface ProjectMetadata {
 }
 ```
 
-### 1.2 ModuleInfo
+### 1.3 ModuleInfo (Legacy Gradle)
+
+**Status**: ⚠️ Legacy (Teil von ProjectMetadata - deprecated)
 
 Pro Gradle-Subproject oder Root-Projekt.
 
@@ -75,7 +237,9 @@ interface ModuleInfo {
 }
 ```
 
-### 1.3 SourceSetInfo
+### 1.4 SourceSetInfo (Legacy Gradle)
+
+**Status**: ⚠️ Legacy (Teil von ModuleInfo - deprecated)
 
 ```typescript
 interface SourceSetInfo {
@@ -87,7 +251,11 @@ interface SourceSetInfo {
 }
 ```
 
-### 1.4 DependencyInfo
+### 1.5 DependencyInfo (Legacy Gradle)
+
+**Status**: ⚠️ Legacy (Teil von ProjectMetadata - deprecated)
+
+**⚠️ Hinweis**: Für neue Implementierungen nutze `UnifiedDependency` (Sektion 1.1)
 
 ```typescript
 interface DependencyInfo {

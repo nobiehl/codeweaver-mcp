@@ -7,7 +7,18 @@
 ## A
 
 ### Agent
-A specialized module in CodeWeaver's multi-agent architecture that handles a specific domain (e.g., SymbolsAgent for symbol extraction, SemanticIndexAgent for vector search). Each agent has focused responsibilities and communicates through the CodeWeaverService.
+A specialized module in CodeWeaver's multi-agent architecture that handles a specific domain. Each agent has focused responsibilities and communicates through the CodeWeaverService.
+
+**9 Agents:**
+- **Project Metadata Agent** - Multi-language project metadata extraction (Gradle, npm, etc.)
+- **Symbols Agent** - Multi-language symbol extraction (Java, TypeScript, JavaScript, Markdown, Python)
+- **Search Agent** - Keyword and pattern search
+- **Analysis Agent** - Code quality metrics
+- **VCS Agent** - Git operations
+- **Semantic Index Agent** - Vector search with LanceDB
+- **File Watcher Agent** - Automatic index updates
+- **Snippets Agent** - Token-efficient file reading
+- **Cache Agent** - Content-addressable caching
 
 **Related:** [Multi-Agent Architecture](#multi-agent-architecture)
 
@@ -19,7 +30,7 @@ Agent responsible for code quality metrics including cyclomatic complexity, line
 ### Annotation (Java)
 Java metadata attached to classes, methods, or fields (e.g., `@Service`, `@Override`, `@Transactional`). CodeWeaver extracts annotations for Spring, JPA, and Jakarta EE frameworks.
 
-**TypeScript equivalent:** [Decorator](#decorator)
+**TypeScript equivalent:** [Decorator](#decorator-typescript)
 
 ### AST (Abstract Syntax Tree)
 Tree representation of source code structure. CodeWeaver uses language-specific parsers to generate ASTs for symbol extraction:
@@ -82,12 +93,7 @@ Metric measuring code complexity by counting independent paths through code. Cod
 ### Decorator (TypeScript)
 TypeScript/JavaScript metadata syntax for classes and methods (e.g., `@Component`, `@Injectable`). Similar to Java annotations.
 
-**Related:** [Annotation](#annotation)
-
-### Discovery Agent
-Agent for extracting Gradle project metadata (Java version, dependencies, modules, plugins).
-
-**Location:** `src/core/agents/discovery.ts`
+**Related:** [Annotation](#annotation-java)
 
 ### Dual Interface
 CodeWeaver's design supporting both CLI and MCP Server modes from the same codebase, with automatic mode detection.
@@ -138,9 +144,9 @@ VCS Agent features for Git operations: status, diff, blame, log, branches, compa
 **Related:** [VCS Agent](#vcs-agent)
 
 ### Gradle
-Java build tool. CodeWeaver's Discovery Agent extracts metadata from `build.gradle` and `settings.gradle`.
+Java build tool. CodeWeaver's Project Metadata Agent extracts metadata from `build.gradle` and `settings.gradle` via GradleMetadataPlugin.
 
-**Related:** [Discovery Agent](#discovery-agent)
+**Related:** [Project Metadata Agent](#project-metadata-agent)
 
 ---
 
@@ -195,9 +201,11 @@ CodeWeaver's stdio-based server mode for AI integration. Provides 19 MCP tools f
 **Location:** `src/mcp/server.ts`
 
 ### Multi-Agent Architecture
-CodeWeaver's design pattern with 9 specialized agents, each handling a specific domain (discovery, cache, symbols, search, analysis, VCS, semantic, watcher, snippets).
+CodeWeaver's design pattern with 10 specialized agents, each handling a specific domain (project metadata, symbols, search, analysis, VCS, semantic, watcher, snippets, cache, discovery).
 
 **Benefits:** Separation of concerns, testability, extensibility
+
+**Central Service:** CodeWeaverService coordinates all agents
 
 **Related:** [Agent](#agent)
 
@@ -211,6 +219,11 @@ npm run dev -- semantic search "auth" --collection docs
 ```
 
 **Related:** [Collection](#collection)
+
+### npm
+Node.js package manager. CodeWeaver's Project Metadata Agent extracts metadata from `package.json` via NpmMetadataPlugin. Supports npm, yarn, pnpm, and bun detection.
+
+**Related:** [Project Metadata Agent](#project-metadata-agent), [Package Manager](#package-manager)
 
 ---
 
@@ -226,6 +239,11 @@ Cross-platform ML inference engine. CodeWeaver uses it for generating embeddings
 ---
 
 ## P
+
+### Package Manager
+Tool for managing project dependencies. CodeWeaver's NpmMetadataPlugin auto-detects: npm (package-lock.json), yarn (yarn.lock), pnpm (pnpm-lock.yaml), bun (bun.lockb).
+
+**Related:** [npm](#npm), [Project Metadata Agent](#project-metadata-agent)
 
 ### Parser
 Tool for converting source code into an AST. CodeWeaver uses language-specific parsers:
@@ -249,6 +267,20 @@ Status indicating a feature is stable and tested for production use. Core featur
 **Beta features:** Semantic Search, Multi-Collection
 
 **Experimental:** File Watcher
+
+### Project Metadata Agent
+Multi-language agent for extracting project metadata with plugin architecture. Supports Gradle, npm, and extensible for pip, Maven, Cargo, etc.
+
+**Features:**
+- Auto-detection of project types
+- Unified schema for all languages
+- Plugin-based extensibility
+
+**Location:** `src/core/agents/projectMetadata.ts`
+
+**Plugins:** `src/core/projectMetadata/plugins/`
+
+**Related:** [Plugin Architecture](#plugin-architecture)
 
 ---
 
@@ -450,7 +482,7 @@ Design principle where core features work without native binaries/compilation. O
 | `type` | Type alias (TS) | `type User = { ... }` |
 | `namespace` | Namespace (TS) | `namespace Utils` |
 | `section` | Markdown header | `## Getting Started` |
-| `reference` | Markdown link | `[link](url)` |
+| `reference` | Markdown link | `[link](https://example.com)` |
 
 ---
 

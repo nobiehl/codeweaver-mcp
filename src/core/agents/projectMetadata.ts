@@ -12,7 +12,6 @@ import type {
   ProjectMetadataPlugin,
   UnifiedProjectMetadata,
   ProjectType,
-  ProjectMetadataPluginConfig,
 } from '../../types/projectMetadata.js';
 import { GradleMetadataPlugin } from '../projectMetadata/plugins/gradle/index.js';
 import { NpmMetadataPlugin } from '../projectMetadata/plugins/npm/index.js';
@@ -63,9 +62,7 @@ export class ProjectMetadataAgent {
    * @param config - Optional configuration
    * @returns Unified project metadata
    */
-  async getProjectMetadata(
-    config?: ProjectMetadataPluginConfig,
-  ): Promise<UnifiedProjectMetadata | null> {
+  async getProjectMetadata(): Promise<UnifiedProjectMetadata | null> {
     const projectTypes = await this.detectProjectTypes();
 
     // If unknown, return null
@@ -77,7 +74,7 @@ export class ProjectMetadataAgent {
     if (projectTypes.length === 1) {
       const plugin = this.plugins.get(projectTypes[0]);
       if (!plugin) return null;
-      return await plugin.extract(this.projectRoot, config);
+      return await plugin.extract(this.projectRoot);
     }
 
     // If multiple project types (e.g., npm + Gradle in monorepo)
@@ -85,7 +82,7 @@ export class ProjectMetadataAgent {
     const primaryPlugin = this.plugins.get(projectTypes[0]);
     if (!primaryPlugin) return null;
 
-    const metadata = await primaryPlugin.extract(this.projectRoot, config);
+    const metadata = await primaryPlugin.extract(this.projectRoot);
 
     // Mark as multi-language project
     metadata.projectType = 'multi';
@@ -101,17 +98,14 @@ export class ProjectMetadataAgent {
    * @param config - Optional configuration
    * @returns Unified project metadata or null if not supported
    */
-  async getMetadataForType(
-    projectType: ProjectType,
-    config?: ProjectMetadataPluginConfig,
-  ): Promise<UnifiedProjectMetadata | null> {
+  async getMetadataForType(projectType: ProjectType): Promise<UnifiedProjectMetadata | null> {
     const plugin = this.plugins.get(projectType);
     if (!plugin) return null;
 
     const detected = await plugin.detect(this.projectRoot);
     if (!detected) return null;
 
-    return await plugin.extract(this.projectRoot, config);
+    return await plugin.extract(this.projectRoot);
   }
 
   /**

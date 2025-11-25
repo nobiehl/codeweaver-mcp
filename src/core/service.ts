@@ -1,4 +1,4 @@
-import { DiscoveryAgent } from './agents/discovery.js';
+import { ProjectMetadataAgent } from './agents/projectMetadata.js';
 import { CacheAgent } from './agents/cache.js';
 import { SnippetsAgent } from './agents/snippets.js';
 import { SymbolsAgent } from './agents/symbols.js';
@@ -6,7 +6,7 @@ import { SearchAgent, type SearchResult, type SearchOptions } from './agents/sea
 import { AnalysisAgent } from './agents/analysis.js';
 import { VCSAgent, type LogOptions } from './agents/vcs.js';
 import { SemanticIndexAgent } from './agents/semantic.js';
-import type { ProjectMetadata } from '../types/project.js';
+import type { UnifiedProjectMetadata, ProjectType } from '../types/projectMetadata.js';
 import type { SymbolDefinition, SymbolKind } from '../types/symbols.js';
 import type { FileAnalysis, ProjectAnalysis } from '../types/analysis.js';
 import type { BlameLine, CommitInfo, BranchInfo, FileStatus, DiffSummary } from '../types/vcs.js';
@@ -18,7 +18,7 @@ import type { SemanticSearchResult, CollectionType, IndexOptions, SemanticIndexS
  */
 export class CodeWeaverService {
   private projectRoot: string;
-  private discoveryAgent: DiscoveryAgent;
+  private projectMetadataAgent: ProjectMetadataAgent;
   private cacheAgent: CacheAgent;
   private snippetsAgent: SnippetsAgent;
   private symbolsAgent: SymbolsAgent;
@@ -29,7 +29,7 @@ export class CodeWeaverService {
 
   constructor(projectRoot: string) {
     this.projectRoot = projectRoot;
-    this.discoveryAgent = new DiscoveryAgent(projectRoot);
+    this.projectMetadataAgent = new ProjectMetadataAgent(projectRoot);
     this.cacheAgent = new CacheAgent(projectRoot);
     this.snippetsAgent = new SnippetsAgent(projectRoot);
     this.symbolsAgent = new SymbolsAgent(projectRoot);
@@ -43,14 +43,46 @@ export class CodeWeaverService {
     return this.projectRoot;
   }
 
-  // === Project Discovery ===
+  // === Project Metadata (Multi-Language) ===
 
-  async getProjectMetadata(): Promise<ProjectMetadata> {
-    return this.discoveryAgent.analyze();
+  /**
+   * Get unified project metadata (auto-detects project type)
+   * Supports: Gradle, npm, pip, Maven, Cargo, etc.
+   */
+  async getUnifiedProjectMetadata(): Promise<UnifiedProjectMetadata | null> {
+    return this.projectMetadataAgent.getProjectMetadata();
   }
 
-  async isGradleProject(): Promise<boolean> {
-    return this.discoveryAgent.detectGradleProject();
+  /**
+   * Detect all project types in current directory
+   * @returns Array of detected project types (e.g., ['gradle'], ['npm', 'gradle'])
+   */
+  async detectProjectTypes(): Promise<ProjectType[]> {
+    return this.projectMetadataAgent.detectProjectTypes();
+  }
+
+  /**
+   * Get metadata for a specific project type
+   * @param projectType - Project type to extract (e.g., 'gradle', 'npm')
+   */
+  async getMetadataForType(projectType: ProjectType): Promise<UnifiedProjectMetadata | null> {
+    return this.projectMetadataAgent.getMetadataForType(projectType);
+  }
+
+  /**
+   * Get available scripts/tasks for detected project type
+   * @param projectType - Optional specific project type
+   * @returns Map of script names to commands
+   */
+  async getProjectScripts(projectType?: ProjectType): Promise<Record<string, string>> {
+    return this.projectMetadataAgent.getScripts(projectType);
+  }
+
+  /**
+   * Get supported project types
+   */
+  getSupportedProjectTypes(): ProjectType[] {
+    return this.projectMetadataAgent.getSupportedProjectTypes();
   }
 
   // === Cache Operations ===

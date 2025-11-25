@@ -11,7 +11,7 @@ Dieser Guide klärt, welche CodeWeaver-Features production-ready sind und welche
 
 | Feature | Status | Verwendung | Test-Coverage | Einschränkungen | Empfehlung |
 |---------|--------|------------|---------------|-----------------|------------|
-| **Discovery Agent** | ✅ Production-Ready | MCP + CLI | ✅ 4 Tests | Nur Gradle-Projekte | ✅ Verwenden |
+| **Project Metadata Agent** | ✅ Production-Ready | MCP + CLI | ✅ 23 Tests | Gradle, npm (erweiterbar) | ✅ Verwenden |
 | **Symbols Agent** | ✅ Production-Ready | MCP + CLI | ✅ 23 Tests | Java 8-23 only | ✅ Verwenden |
 | **Search Agent (Keyword)** | ✅ Production-Ready | MCP + CLI | ✅ 11 Tests | Text-basiert | ✅ Verwenden |
 | **Analysis Agent** | ✅ Production-Ready | MCP + CLI | ✅ 11 Tests | Java-fokussiert | ✅ Verwenden |
@@ -30,24 +30,27 @@ Dieser Guide klärt, welche CodeWeaver-Features production-ready sind und welche
 
 ## 🎯 Production-Ready Features
 
-### 1. Discovery Agent (Gradle Metadata)
+### 1. Project Metadata Agent (Multi-Language Metadata)
 
 **Status**: ✅ Production-Ready
-**Test-Coverage**: 4 Tests
-**Use Cases**: Projekt-Informationen auslesen
+**Test-Coverage**: 23 Tests
+**Use Cases**: Multi-Language Projekt-Informationen auslesen
 
 **Was funktioniert:**
-- ✅ Gradle-Version erkennen
-- ✅ Java-Version extrahieren
-- ✅ Dependencies auslesen
-- ✅ Plugins erkennen
-- ✅ Multi-Module-Projekte
+- ✅ **Gradle**: Version, Java-Version, Dependencies, Plugins, Module
+- ✅ **npm**: Package Manager Detection (npm/yarn/pnpm/bun), Dependencies, Scripts, Workspaces
+- ✅ **Auto-Detection**: Erkennt mehrere Projekttypen gleichzeitig
+- ✅ **Unified Schema**: Einheitliches Format für alle Sprachen
+- ✅ **Erweiterbar**: Plugin-Architektur für neue Build-Systeme (pip, Maven, Cargo, etc.)
 
-**Einschränkungen:**
-- ❌ Nur Gradle (kein Maven, SBT)
-- ⚠️ Erfordert `build.gradle` oder `build.gradle.kts`
+**Unterstützte Projekttypen:**
+- ✅ Gradle (Java, Kotlin)
+- ✅ npm (TypeScript, JavaScript)
+- 🔜 pip (Python) - Plugin ready
+- 🔜 Maven (Java) - Plugin ready
+- 🔜 Cargo (Rust) - Plugin ready
 
-**Empfehlung**: ✅ Für Gradle-Projekte bedenkenlos verwenden
+**Empfehlung**: ✅ Für alle Gradle- und npm-Projekte verwenden
 
 ---
 
@@ -79,7 +82,7 @@ Dieser Guide klärt, welche CodeWeaver-Features production-ready sind und welche
 
 ---
 
-### 3. Search Agent (Keyword/Pattern)
+### 4. Search Agent (Keyword/Pattern)
 
 **Status**: ✅ Production-Ready
 **Test-Coverage**: 11 Tests
@@ -105,7 +108,7 @@ Dieser Guide klärt, welche CodeWeaver-Features production-ready sind und welche
 
 ---
 
-### 4. Analysis Agent (Code Quality)
+### 5. Analysis Agent (Code Quality)
 
 **Status**: ✅ Production-Ready
 **Test-Coverage**: 11 Tests
@@ -131,7 +134,7 @@ Dieser Guide klärt, welche CodeWeaver-Features production-ready sind und welche
 
 ---
 
-### 5. VCS Agent (Git Integration)
+### 6. VCS Agent (Git Integration)
 
 **Status**: ✅ Production-Ready
 **Test-Coverage**: 11 Tests
@@ -341,14 +344,15 @@ Siehe: [PERFORMANCE_OPTIMIZATION.md](./../architecture/PERFORMANCE_OPTIMIZATION.
 ### Kann ich CodeWeaver in Production verwenden?
 
 **Ja, aber nur für Core-Features:**
-- ✅ Discovery, Symbols, Search (Keyword), Analysis, VCS sind production-ready
+- ✅ Project Metadata, Symbols, Search (Keyword), Analysis, VCS sind production-ready
+- ⚠️ Discovery Agent ist deprecated (nutze Project Metadata Agent)
 - ⚠️ Semantic Search nur für kleine Projekte (<5k Dateien)
 - 🧪 File Watcher noch nicht für Production
 
 ### Welche Features haben keine Native Dependencies?
 
 **Core-Features:**
-- ✅ Discovery, Symbols, Search (Keyword), Analysis, VCS
+- ✅ Project Metadata, Symbols, Search (Keyword), Analysis, VCS
 
 **Native Dependencies:**
 - ⚠️ Semantic Search (LanceDB + ONNX Runtime)

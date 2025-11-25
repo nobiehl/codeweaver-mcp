@@ -34,6 +34,7 @@
 
 | Document | Description | Feature Status |
 |----------|-------------|----------------|
+| [**PROJECT_METADATA.md**](./guides/PROJECT_METADATA.md) 🆕 | Multi-language project metadata extraction (Gradle, npm, pip, Maven, etc.) | ✅ Production-Ready |
 | [**SEMANTIC_SEARCH.md**](./guides/SEMANTIC_SEARCH.md) | AI-powered semantic search with LanceDB + ONNX embeddings | ⚠️ Beta |
 | [**MULTI_COLLECTION_GUIDE.md**](./guides/MULTI_COLLECTION_GUIDE.md) | Multi-collection support for Code + Docs | ⚠️ Beta |
 | [**FILE_WATCHER_GUIDE.md**](./guides/FILE_WATCHER_GUIDE.md) | Automatic incremental index updates on file changes | 🧪 Experimental |
@@ -62,6 +63,7 @@
 | [**CLAUDE.md**](./development/CLAUDE.md) | Guide for Claude Code when working with this repository | Claude Code |
 | [**CONTRIBUTING.md**](./development/CONTRIBUTING.md) | How to contribute: issues, PRs, code style, testing | Contributors |
 | [**TESTING.md**](./development/TESTING.md) | Test strategy, coverage, and running tests | Developers |
+| [**LINK_VALIDATION.md**](./development/LINK_VALIDATION.md) 🆕 | Automated markdown link validation tool | Contributors/Maintainers |
 | [**STATUS_AND_ROADMAP.md**](./development/STATUS_AND_ROADMAP.md) | Feature status matrix and development roadmap | All |
 
 ---
@@ -133,6 +135,7 @@
 - [DEVELOPER_WORKFLOW.md](./getting-started/DEVELOPER_WORKFLOW.md) - Real Examples
 
 ### Features
+- [PROJECT_METADATA.md](./guides/PROJECT_METADATA.md) 🆕 - Project Metadata (Multi-Language)
 - [SEMANTIC_SEARCH.md](./guides/SEMANTIC_SEARCH.md) - Semantic Search
 - [MULTI_COLLECTION_GUIDE.md](./guides/MULTI_COLLECTION_GUIDE.md) - Multi-Collection
 - [FILE_WATCHER_GUIDE.md](./guides/FILE_WATCHER_GUIDE.md) - File Watcher

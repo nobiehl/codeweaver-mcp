@@ -1,7 +1,7 @@
 {
   "name": "codeweaver-mcp",
-  "version": "0.3.0",
-  "description": "Token-efficient MCP server for multi-language code analysis (Java, TypeScript, JavaScript, Markdown, Python) with semantic search and plugin architecture",
+  "version": "0.4.0",
+  "description": "Token-efficient MCP server for multi-language code analysis (Java, TypeScript, JavaScript, Markdown, Python) with semantic search and system health checks",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
@@ -16,7 +16,10 @@
     "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "clean": "rimraf dist .mcp-cache",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "validate-links": "tsx scripts/validate-links.ts",
+    "validate-links:external": "tsx scripts/validate-links.ts --external",
+    "validate-links:verbose": "tsx scripts/validate-links.ts --verbose"
   },
   "keywords": [
     "mcp",

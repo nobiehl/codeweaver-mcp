@@ -13,7 +13,6 @@ import type {
   UnifiedDependency,
   UnifiedModule,
   DependencyScope,
-  ProjectMetadataPluginConfig,
 } from '../../../../types/projectMetadata.js';
 import type { Language } from '../../../../types/language.js';
 
@@ -35,10 +34,7 @@ export class GradleMetadataPlugin implements ProjectMetadataPlugin {
     }
   }
 
-  async extract(
-    projectRoot: string,
-    config?: ProjectMetadataPluginConfig,
-  ): Promise<UnifiedProjectMetadata> {
+  async extract(projectRoot: string): Promise<UnifiedProjectMetadata> {
     const [settingsContent, buildContent] = await Promise.all([
       this.readGradleFile(projectRoot, 'settings'),
       this.readGradleFile(projectRoot, 'build'),
@@ -47,7 +43,7 @@ export class GradleMetadataPlugin implements ProjectMetadataPlugin {
     const name = this.extractProjectName(settingsContent);
     const version = this.extractVersion(buildContent);
     const javaVersion = this.extractJavaVersion(buildContent);
-    const dependencies = this.extractDependencies(buildContent, config);
+    const dependencies = this.extractDependencies(buildContent);
     const devDependencies = this.extractDevDependencies(buildContent);
     const plugins = this.extractPlugins(buildContent);
     const gradleWrapperPresent = await this.fileExists(projectRoot, 'gradlew');
@@ -180,10 +176,7 @@ export class GradleMetadataPlugin implements ProjectMetadataPlugin {
     return plugins;
   }
 
-  private extractDependencies(
-    buildContent: string,
-    config?: ProjectMetadataPluginConfig,
-  ): UnifiedDependency[] {
+  private extractDependencies(buildContent: string): UnifiedDependency[] {
     const dependencies: UnifiedDependency[] = [];
 
     // Match: implementation 'group:artifact:version'

@@ -24,13 +24,14 @@ graph TD
 tests/
 ├── unit/                           # Unit-Tests (~200-300)
 │   ├── agents/
-│   │   ├── discovery.test.ts
-│   │   ├── index.test.ts
+│   │   ├── projectMetadata.test.ts
 │   │   ├── symbols.test.ts
 │   │   ├── search.test.ts
 │   │   ├── analysis.test.ts
 │   │   ├── snippets.test.ts
 │   │   ├── vcs.test.ts
+│   │   ├── semantic.test.ts
+│   │   ├── watcher.test.ts
 │   │   └── cache.test.ts
 │   ├── index/
 │   │   ├── fulltext.test.ts

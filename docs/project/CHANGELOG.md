@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2025-11-25
+
+**System Health Checks + Dependency Validation + Discovery Agent Removal** 🔍
+
+Complete system dependency validation with doctor command and automatic startup checks. Removed deprecated Discovery Agent for cleaner codebase.
+
+### Added
+
+#### 🏥 System Check Agent (NEW)
+- **SystemCheckAgent** - Comprehensive dependency validation
+  - Checks Node.js (>=18.0.0), Git (>=2.0.0) - **required**
+  - Checks Python (>=3.8.0), Gradle (>=7.0.0), Maven (>=3.6.0) - **optional**
+  - Version detection and path resolution
+  - Detailed error messages and installation recommendations
+- **CLI Command: `codeweaver doctor`** - Full system diagnostic
+  - Colored output with icons (✓/✗/⚠)
+  - Shows installed versions and file paths
+  - Installation/upgrade recommendations
+  - `--quick` flag for fast critical-only check
+- **Automatic Startup Check** - Validates critical dependencies on CLI launch
+  - Silent when all dependencies are met
+  - Warning display with `CODEWEAVER_VERBOSE=1`
+  - Skipped in MCP mode (stdio)
+- **11 new tests** for SystemCheckAgent (267 total tests passing)
+
+#### 📋 Documentation Improvements
+- **Test Status Corrections** - Fixed incorrect test counts (256 passing, not 218)
+- **Python Status Update** - Marked Python support as fully functional (no longer beta)
+- **Link Validation Tool** - Created `scripts/validate-links.ts` for markdown link checking
+- **LINK_VALIDATION.md** - Documentation for link validation workflows
+
+### Changed
+- **Mode Detection** - Improved CLI vs MCP detection
+  - Now recognizes CLI commands explicitly
+  - Works reliably on Windows without TTY
+  - Priority: `--mcp` flag > CLI command > TTY status
+- **CodeWeaverService** - Added unified project metadata methods
+  - `getUnifiedProjectMetadata()` - Auto-detects project type
+  - `getMetadataForType(type)` - Specific project type extraction
+- **CLI `info` command** - Migrated to unified metadata API
+- **MCP `project.meta` tool** - Removed legacy flag, unified schema only
+- **Documentation** - Updated all agent counts from 10 to 9 agents
+
+### Removed
+- **Discovery Agent** - Deprecated agent removed (replaced by ProjectMetadataAgent in v0.3.0)
+  - `src/core/agents/discovery.ts` - Agent implementation
+  - `tests/unit/agents/discovery.test.ts` - Tests
+  - All references in documentation and code
+- **Legacy API** - Removed backward-compatibility methods
+  - `service.getProjectMetadata()` - Use `getUnifiedProjectMetadata()` instead
+  - `service.isGradleProject()` - Detection now handled by plugins
+
+### Fixed
+- **Broken Documentation Links** - Fixed 28 broken internal links in docs
+- **Test Count Documentation** - Corrected from 218+19 skipped to 256 passing
+- **Python WASM Status** - Removed incorrect "pending" status (fully working)
+
 ## [0.3.0] - 2025-11-17
 
 **Multi-Language Plugin Architecture + Python Support + Documentation Audit** 🎉

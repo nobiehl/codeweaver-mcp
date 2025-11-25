@@ -64,7 +64,7 @@ npm test -- tests/unit/agents/symbols.test.ts
 - `tests/fixtures/` - Test-Fixtures (gradle-projects, Java/TypeScript/Markdown/Python-Dateien)
 - **Timeout**: 30 Sekunden für Tests (wichtig für Gradle-Tests)
 - **Framework**: Vitest mit Node-Environment
-- **Total**: 218 Tests passing | 19 skipped (Python WASM config)
+- **Total**: 256 Tests passing (100%)
 
 ### Linting & Formatting
 
@@ -151,7 +151,7 @@ src/
 
 **9 Agents** (alle implementiert):
 
-1. **DiscoveryAgent** (`agents/discovery.ts`) - Gradle-Metadaten (build.gradle, settings.gradle)
+1. **ProjectMetadataAgent** (`agents/projectMetadata.ts`) - Multi-Language Metadaten (Gradle, npm) mit Plugin-Architektur
 2. **CacheAgent** (`agents/cache.ts`) - Content-addressable Caching mit SHA-256
 3. **SnippetsAgent** (`agents/snippets.ts`) - Token-effizientes File-Reading
 4. **SymbolsAgent** (`agents/symbols.ts`) - Multi-Language Symbol-Extraktion mit Plugin-Architektur
@@ -159,7 +159,7 @@ src/
    - **TypeScript**: Classes, Interfaces, Types, Enums, Functions, Generics, Decorators, Namespaces
    - **JavaScript**: Classes, Functions, Arrow Functions, Async/Await, ES6+
    - **Markdown**: Headers as Sections, Local Links as References, Code Blocks
-   - **Python**: Classes, Functions, Methods, Decorators (@decorator), Type Hints, Async/Await (architecture complete, WASM config pending)
+   - **Python**: Classes, Functions, Methods, Decorators (@decorator), Type Hints, Async/Await
    - Methods/Functions mit Parameters, Generics, Annotations/Decorators
    - Fields/Properties mit Modifiers, Visibility
    - Constructors, Nested Types, Enum Constants
@@ -181,7 +181,8 @@ src/
 ### MCP Tools (19 total)
 
 **Projekt & Files:**
-- `project.meta` - Projekt-Metadaten (Java-Version, Module, Dependencies)
+- `project.meta` - Multi-Language Projekt-Metadaten (auto-detects: Gradle, npm, pip, Maven, etc.)
+  - Optional `projectType` parameter for specific extraction
 - `file.read` - File mit Token-Limit (default: 10k tokens)
 - `file.readRange` - Spezifische Zeilen (1-indexed, inclusive)
 - `file.readWithNumbers` - File mit Zeilennummern
@@ -229,7 +230,7 @@ src/
   - java-parser für Java (AST-basiert, Pure JS)
   - @typescript-eslint/typescript-estree für TypeScript/JavaScript (ESTree-kompatibel, Pure JS)
   - remark/unified für Markdown (MDAST, Pure JS)
-  - tree-sitter-wasms + web-tree-sitter für Python (WASM-basiert, Node.js config pending)
+  - tree-sitter-wasms + web-tree-sitter für Python (WASM-basiert)
 - ✅ JSON Lines für Persistenz
 - ✅ In-Memory Maps für Performance
 - ✅ Kein SQLite (native Bindings)
@@ -312,7 +313,7 @@ src/core/language/
   - Headers as Sections, Local Links as References, Code Blocks
 - ⚠️ **Python** (.py, .pyi, .pyw) - tree-sitter-wasms + web-tree-sitter
   - Classes, Functions, Methods, Decorators, Type Hints, Async/Await
-  - Architecture complete, WASM init für Node.js pending (18 tests skipped)
+  - Fully functional with tree-sitter WASM
 
 **Backward Compatibility:**
 - ✅ SymbolsAgent API bleibt unverändert (`parseFile`, `indexProject`, `findSymbolsByName`, etc.)
@@ -338,9 +339,9 @@ src/core/language/
 - 23 Tests für Java-Plugin
 - 21 Tests für TypeScript/JavaScript-Plugin
 - 13 Tests für Markdown-Plugin
-- 18 Tests für Python-Plugin (skipped - WASM config pending)
+- 18 Tests für Python-Plugin
 - 12 Multi-Language Integration Tests
-- **Total: 218 Tests passing | 19 skipped (Python WASM)**
+- **Total: 256 Tests passing (100%)**
 
 ## Code-Konventionen
 
@@ -617,14 +618,14 @@ node -e "console.log('isTTY:', process.stdin.isTTY)"
 **Features:**
 - ✅ 19 MCP Tools
 - ✅ 7 CLI Command-Gruppen
-- ✅ 9 Agents (alle implementiert)
+- ✅ **9 Agents** (Project Metadata, Cache, Snippets, Symbols, Search, Analysis, VCS, Semantic Index, File Watcher)
 - ✅ **Multi-Language Plugin Architecture** (Java, TypeScript, JavaScript, Markdown, Python*)
 - ✅ Semantic Search mit ONNX Runtime
 - ✅ Multi-Collection Support
 - ✅ File-Watcher für Auto-Updates
-- ✅ 218 Tests passing | 19 skipped (Python WASM config)
+- ✅ 256 Tests passing (100%)
 
-**\*Python Support:** Architecture complete (parser, extractor, plugin), WASM initialization for Node.js pending
+**Python Support:** Fully functional with tree-sitter WASM parser
 
 **Known Limitations:**
 - Performance-Issues bei >10k Files
@@ -640,9 +641,9 @@ node -e "console.log('isTTY:', process.stdin.isTTY)"
 | Feature-Kategorie | Status | Verwendung | Einschränkungen |
 |-------------------|--------|------------|-----------------|
 | **Core Features** | | | |
-| ├─ Discovery (Gradle) | ✅ Production-Ready | MCP + CLI | Nur Gradle-Projekte |
+| ├─ Project Metadata (Multi-Language) | ✅ Production-Ready | MCP + CLI | Gradle, npm - vollständig getestet |
 | ├─ Symbols (Multi-Language) | ✅ Production-Ready | MCP + CLI | Java, TypeScript, JavaScript, Markdown - vollständig getestet |
-| ├─ Symbols (Python) | ⚠️ Beta | - | Architecture complete, WASM config pending |
+| ├─ Symbols (Python) | ✅ Production-Ready | MCP + CLI | Fully functional |
 | ├─ Search (Keyword) | ✅ Production-Ready | MCP + CLI | Grep-like, zuverlässig |
 | ├─ Analysis (Complexity) | ✅ Production-Ready | MCP + CLI | Cyclomatic Complexity, LOC |
 | └─ VCS (Git) | ✅ Production-Ready | MCP + CLI | Git-Operationen, stabil |

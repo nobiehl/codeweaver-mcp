@@ -93,7 +93,14 @@ npm run lint
 
 # Format your code
 npm run format
+
+# Validate documentation links (if you changed markdown files)
+npm run validate-links
 ```
+
+**⚠️ Important**: If you modify documentation, always run `npm run validate-links` to ensure all links are valid.
+
+See [LINK_VALIDATION.md](./LINK_VALIDATION.md) for details.
 
 ### 4. Commit Your Changes
 
@@ -338,7 +345,7 @@ This project follows the [Contributor Covenant Code of Conduct](./../project/COD
 
 ## 📄 License
 
-By contributing, you agree that your contributions will be licensed under the [MIT License](LICENSE).
+By contributing, you agree that your contributions will be licensed under the [MIT License](../../LICENSE).
 
 ---
 

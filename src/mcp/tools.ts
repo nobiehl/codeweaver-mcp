@@ -8,10 +8,18 @@ export function registerTools(server: Server, service: CodeWeaverService) {
     tools: [
       {
         name: 'project.meta',
-        description: 'Get project metadata (Java version, modules, dependencies)',
+        description:
+          'Get unified project metadata (auto-detects: Gradle, npm, pip, Maven, etc.). Supports multi-language projects.',
         inputSchema: {
           type: 'object',
-          properties: {},
+          properties: {
+            projectType: {
+              type: 'string',
+              description:
+                'Optional: Specific project type (gradle, npm, pip, maven, cargo). If not provided, auto-detects.',
+              enum: ['gradle', 'npm', 'pip', 'maven', 'cargo', 'composer', 'nuget', 'go-mod'],
+            },
+          },
         },
       },
       {
@@ -313,7 +321,39 @@ export function registerTools(server: Server, service: CodeWeaverService) {
     try {
       switch (name) {
         case 'project.meta': {
-          const metadata = await service.getProjectMetadata();
+          const { projectType } = (args || {}) as { projectType?: string };
+
+          // Get project metadata (multi-language)
+          let metadata;
+          if (projectType) {
+            // Get metadata for specific project type
+            metadata = await service.getMetadataForType(projectType as any);
+          } else {
+            // Auto-detect and return unified metadata
+            metadata = await service.getUnifiedProjectMetadata();
+          }
+
+          if (!metadata) {
+            // No recognizable project structure found
+            const supportedTypes = service.getSupportedProjectTypes();
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(
+                    {
+                      error: 'No recognizable project structure detected',
+                      supportedTypes,
+                      hint: 'Make sure you are in a project directory with build files (e.g., build.gradle, package.json, requirements.txt)',
+                    },
+                    null,
+                    2,
+                  ),
+                },
+              ],
+            };
+          }
+
           return {
             content: [
               {

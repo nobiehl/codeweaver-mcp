@@ -9,17 +9,46 @@ export function infoCommands(program: Command, service: CodeWeaverService) {
       try {
         console.log('🕸️  CodeWeaver - Analyzing project...\n');
 
-        const meta = await service.getProjectMetadata();
+        const meta = await service.getUnifiedProjectMetadata();
+
+        if (!meta) {
+          console.log('No project detected in current directory.');
+          console.log('Supported project types: Gradle, npm, pip, Maven, Cargo, etc.');
+          return;
+        }
 
         console.log('Project Information:');
         console.log(`  Name:         ${meta.name}`);
+        console.log(`  Version:      ${meta.version || 'N/A'}`);
         console.log(`  Root:         ${meta.root}`);
-        console.log(`  Build System: ${meta.buildSystem}`);
-        console.log(`  Java Version: ${meta.javaVersion}`);
-        console.log(`  Gradle:       ${meta.gradleVersion}`);
-        console.log(`  Modules:      ${meta.moduleCount}`);
+        console.log(`  Type:         ${meta.projectType}`);
+        console.log(`  Build Tool:   ${meta.buildTool}`);
+        console.log(`  Languages:    ${meta.languages.join(', ')}`);
         console.log(`  Dependencies: ${meta.dependencies.length}`);
-        console.log(`  Wrapper:      ${meta.gradleWrapperPresent ? '✓' : '✗'}`);
+
+        if (meta.devDependencies && meta.devDependencies.length > 0) {
+          console.log(`  Dev Deps:     ${meta.devDependencies.length}`);
+        }
+
+        if (meta.modules && meta.modules.length > 0) {
+          console.log(`  Modules:      ${meta.modules.length}`);
+        }
+
+        // Show project-specific metadata
+        if (meta.metadata) {
+          if (meta.metadata.javaVersion) {
+            console.log(`  Java:         ${meta.metadata.javaVersion}`);
+          }
+          if (meta.metadata.gradleVersion) {
+            console.log(`  Gradle:       ${meta.metadata.gradleVersion}`);
+          }
+          if (meta.metadata.nodeVersion) {
+            console.log(`  Node:         ${meta.metadata.nodeVersion}`);
+          }
+          if (meta.metadata.packageManager) {
+            console.log(`  Pkg Manager:  ${meta.metadata.packageManager}`);
+          }
+        }
 
       } catch (error) {
         console.error('Error:', (error as Error).message);
