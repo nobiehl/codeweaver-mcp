@@ -57,9 +57,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to npm (optional)
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-          npm publish
-        continue-on-error: true
-        if: ${{ secrets.NPM_TOKEN != '' }}
+      # npm publish is disabled - uncomment when NPM_TOKEN secret is configured
+      # - name: Publish to npm (optional)
+      #   run: |
+      #     echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      #     npm publish
+      #   continue-on-error: true
+      #   env:
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
