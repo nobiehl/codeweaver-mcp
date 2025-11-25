@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **CodeWeaver** ist ein token-effizienter MCP (Model Context Protocol) Server für Multi-Language-Projektanalyse (Java, TypeScript, JavaScript, Markdown, Python) mit semantischer Suche, Multi-Agent-Architektur und Dual-Interface (CLI + MCP Server).
 
 - **Dual-Mode System**: Automatische Erkennung zwischen CLI (Terminal) und MCP Server (stdio) Modus
-- **Multi-Agent Architektur**: 9 spezialisierte Agents für verschiedene Aufgaben
+- **Multi-Agent Architektur**: 11 spezialisierte Agents für verschiedene Aufgaben
 - **Multi-Language Support**: Java, TypeScript, JavaScript, Markdown, Python mit Plugin-Architektur (einfach erweiterbar)
 - **Zero Native Dependencies**: Pure Node.js/TypeScript ohne native Binaries (Core-Features)
 - **Token-Efficiency First**: Niemals ganze Files senden, nur gezielte Snippets
@@ -64,7 +64,7 @@ npm test -- tests/unit/agents/symbols.test.ts
 - `tests/fixtures/` - Test-Fixtures (gradle-projects, Java/TypeScript/Markdown/Python-Dateien)
 - **Timeout**: 30 Sekunden für Tests (wichtig für Gradle-Tests)
 - **Framework**: Vitest mit Node-Environment
-- **Total**: 256 Tests passing (100%)
+- **Total**: 291 Tests passing (100%)
 
 ### Linting & Formatting
 
@@ -139,17 +139,17 @@ src/
 ├── mcp/
 │   ├── index.ts                  # MCP entry mit stdio
 │   ├── server.ts                 # MCP Server (SDK v1.0.4)
-│   └── tools.ts                  # 19 MCP Tools
+│   └── tools.ts                  # 22 MCP Tools
 └── core/
     ├── service.ts                # ⭐ Shared Business Logic
-    └── agents/                   # 9 spezialisierte Agents
+    └── agents/                   # 11 spezialisierte Agents
 ```
 
 **Wichtig**: CLI und MCP teilen sich die **exakt gleiche Business Logic** in `CodeWeaverService`!
 
 ### Multi-Agent System
 
-**9 Agents** (alle implementiert):
+**11 Agents** (alle implementiert):
 
 1. **ProjectMetadataAgent** (`agents/projectMetadata.ts`) - Multi-Language Metadaten (Gradle, npm) mit Plugin-Architektur
 2. **CacheAgent** (`agents/cache.ts`) - Content-addressable Caching mit SHA-256
@@ -172,13 +172,15 @@ src/
    - @xenova/transformers für Embeddings
    - Incremental Updates
 9. **FileWatcherAgent** (`agents/watcher.ts`) - Chokidar File-Watcher für automatische Index-Updates
+10. **SystemCheckAgent** (`agents/systemCheck.ts`) - Dependency-Validierung (Node.js, Git, Python, Gradle, Maven)
+11. **StaticAnalysisAgent** (`agents/staticAnalysis.ts`) - SpotBugs & Checkstyle Integration mit Plugin-Architektur
 
 **Storage**:
 - **JSON Lines** (`.codeweaver/symbols.jsonl`) - Symbol-Index-Persistenz
 - **In-Memory Maps** - Performance-kritische Lookups
 - **LanceDB** - Vector-Datenbank für semantische Suche (optional)
 
-### MCP Tools (19 total)
+### MCP Tools (22 total)
 
 **Projekt & Files:**
 - `project.meta` - Multi-Language Projekt-Metadaten (auto-detects: Gradle, npm, pip, Maven, etc.)
@@ -209,6 +211,11 @@ src/
 - `vcs.log` - Commit History
 - `vcs.branches` - Branch-Liste
 - `vcs.compare` - Branch-Vergleich
+
+**Static Analysis:**
+- `staticAnalysis.tools` - Verfügbare Tools und Installation prüfen
+- `staticAnalysis.run` - SpotBugs/Checkstyle ausführen
+- `staticAnalysis.report` - Formatierter Text-Report
 
 ## Wichtige Konzepte
 
@@ -341,7 +348,7 @@ src/core/language/
 - 13 Tests für Markdown-Plugin
 - 18 Tests für Python-Plugin
 - 12 Multi-Language Integration Tests
-- **Total: 256 Tests passing (100%)**
+- **Total: 291 Tests passing (100%)**
 
 ## Code-Konventionen
 
@@ -612,27 +619,26 @@ node -e "console.log('isTTY:', process.stdin.isTTY)"
 
 ## Aktuelle Version & Status
 
-**Version**: v0.2.0 (Beta)
-**Status**: Multi-Language Support (Java, TypeScript, JavaScript, Markdown, Python*)
+**Version**: v0.6.0 (Beta)
+**Status**: Multi-Language Support + Static Analysis + Code Cleanup
 
 **Features:**
-- ✅ 19 MCP Tools
-- ✅ 7 CLI Command-Gruppen
-- ✅ **9 Agents** (Project Metadata, Cache, Snippets, Symbols, Search, Analysis, VCS, Semantic Index, File Watcher)
-- ✅ **Multi-Language Plugin Architecture** (Java, TypeScript, JavaScript, Markdown, Python*)
+- ✅ 22 MCP Tools
+- ✅ 8 CLI Command-Gruppen (inkl. `doctor`)
+- ✅ **11 Agents** (Project Metadata, Cache, Snippets, Symbols, Search, Analysis, VCS, Semantic Index, File Watcher, System Check, Static Analysis)
+- ✅ **Multi-Language Plugin Architecture** (Java, TypeScript, JavaScript, Markdown, Python)
+- ✅ **Static Analysis** (SpotBugs, Checkstyle) mit Plugin-Architektur
 - ✅ Semantic Search mit ONNX Runtime
 - ✅ Multi-Collection Support
 - ✅ File-Watcher für Auto-Updates
-- ✅ 256 Tests passing (100%)
-
-**Python Support:** Fully functional with tree-sitter WASM parser
+- ✅ 291 Tests passing (100%)
 
 **Known Limitations:**
 - Performance-Issues bei >10k Files
 - Semantic Search hat hohen Memory-Verbrauch
 - Breaking Changes möglich in zukünftigen Releases
 
-**Roadmap**: Phase 5 (Orchestration) geplant mit DAG-based Pipeline und paralleler Ausführung.
+**Roadmap**: PMD und SonarLint Integration geplant.
 
 ## Production-Readiness Matrix
 

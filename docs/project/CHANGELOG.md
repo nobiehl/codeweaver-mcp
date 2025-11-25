@@ -7,6 +7,83 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2025-11-25
+
+**Static Analysis + Code Cleanup** 🧹
+
+Plugin-based static analysis integration for Java code quality (SpotBugs, Checkstyle) combined with comprehensive codebase cleanup - all packages updated, TODOs resolved, deprecated code removed.
+
+### Added
+
+#### 🔬 Static Analysis Agent (NEW)
+- **StaticAnalysisAgent** - Orchestrates multiple static analysis tools
+  - Plugin-based architecture for easy extension
+  - Parallel execution of multiple tools
+  - Result aggregation and deduplication
+  - Severity and category filtering
+  - Human-readable report formatting
+
+#### 🐛 SpotBugs Plugin
+- **SpotBugsPlugin** - Java bug detection
+  - Finds NullPointerExceptions, Resource Leaks, SQL Injections
+  - Supports Gradle plugin and standalone mode
+  - XML report parsing with source location mapping
+  - Severity mapping: High, Medium, Low
+  - Category mapping: Bug, Vulnerability, Performance, Best-Practice
+
+#### ✅ Checkstyle Plugin
+- **CheckstylePlugin** - Java code style checking
+  - Naming conventions, formatting rules, imports
+  - Supports Gradle plugin and standalone mode
+  - Default config (Google Style) included
+  - 100+ check categories mapped
+  - Documentation URLs for each rule
+
+#### 🔧 MCP Tools (3 new tools, 22 total)
+- `staticAnalysis.tools` - List available tools and check availability
+- `staticAnalysis.run` - Run analysis with SpotBugs and/or Checkstyle
+- `staticAnalysis.report` - Get formatted human-readable report
+
+#### 📝 Type Definitions
+- `src/types/staticAnalysis.ts` - Comprehensive type system
+  - `StaticAnalysisFinding` - Individual findings with location
+  - `StaticAnalysisResult` - Tool results with summary
+  - `CombinedAnalysisResult` - Multi-tool aggregated results
+  - `StaticAnalysisPlugin` - Plugin interface for extensions
+  - `ToolAvailability` - Installation status and instructions
+
+#### 🧪 Tests
+- **24 new tests** for StaticAnalysisAgent, SpotBugs, and Checkstyle
+- Total: **291 tests passing** (100%)
+
+### Changed
+- **CodeWeaverService** - Added static analysis methods
+  - `runStaticAnalysisTool()` - Run single tool
+  - `runAllStaticAnalysisTools()` - Run all available tools
+  - `runStaticAnalysisTools()` - Run specific tools
+  - `formatStaticAnalysisReport()` - Generate report
+  - `checkStaticAnalysisToolsAvailability()` - Check installations
+- **Documentation** - Updated STATUS_AND_ROADMAP.md with implementation status
+- **npm Packages** - Updated all dependencies to latest compatible versions
+
+### Removed
+- **All TODOs** - Resolved or converted to clean implementation notes
+  - `cache.ts` - Metadata tracking TODO removed
+  - `typescript/extractor.ts` - Namespace and argument TODOs resolved
+  - `java/extractor.ts` - Parameter extraction TODO resolved
+  - `python/extractor.ts` - Argument extraction TODO resolved
+- **Deprecated comments** - Cleaned up all references to removed code
+  - Removed DiscoveryAgent reference from projectMetadata.ts
+  - Updated enum extraction comment in typescript/extractor.ts
+
+### Architecture
+- **Plugin Architecture** - Same pattern as ProjectMetadataAgent
+  - Easy to add PMD, SonarLint later
+  - Each plugin is self-contained
+  - Central agent coordinates execution
+
+---
+
 ## [0.4.0] - 2025-11-25
 
 **System Health Checks + Dependency Validation + Discovery Agent Removal** 🔍

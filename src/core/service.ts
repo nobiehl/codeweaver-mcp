@@ -6,11 +6,19 @@ import { SearchAgent, type SearchResult, type SearchOptions } from './agents/sea
 import { AnalysisAgent } from './agents/analysis.js';
 import { VCSAgent, type LogOptions } from './agents/vcs.js';
 import { SemanticIndexAgent } from './agents/semantic.js';
+import { StaticAnalysisAgent } from './agents/staticAnalysis.js';
 import type { UnifiedProjectMetadata, ProjectType } from '../types/projectMetadata.js';
 import type { SymbolDefinition, SymbolKind } from '../types/symbols.js';
 import type { FileAnalysis, ProjectAnalysis } from '../types/analysis.js';
 import type { BlameLine, CommitInfo, BranchInfo, FileStatus, DiffSummary } from '../types/vcs.js';
 import type { SemanticSearchResult, CollectionType, IndexOptions, SemanticIndexStats } from '../types/semantic.js';
+import type {
+  StaticAnalysisResult,
+  CombinedAnalysisResult,
+  StaticAnalysisTool,
+  StaticAnalysisOptions,
+  ToolAvailability,
+} from '../types/staticAnalysis.js';
 
 /**
  * CodeWeaverService - Zentrale Business Logic
@@ -26,6 +34,7 @@ export class CodeWeaverService {
   private analysisAgent: AnalysisAgent;
   private vcsAgent: VCSAgent;
   private semanticAgent: SemanticIndexAgent;
+  private staticAnalysisAgent: StaticAnalysisAgent;
 
   constructor(projectRoot: string) {
     this.projectRoot = projectRoot;
@@ -37,6 +46,7 @@ export class CodeWeaverService {
     this.analysisAgent = new AnalysisAgent(projectRoot);
     this.vcsAgent = new VCSAgent(projectRoot);
     this.semanticAgent = new SemanticIndexAgent(projectRoot);
+    this.staticAnalysisAgent = new StaticAnalysisAgent(projectRoot);
   }
 
   getProjectRoot(): string {
@@ -332,5 +342,66 @@ export class CodeWeaverService {
 
   getVCSAgent(): VCSAgent {
     return this.vcsAgent;
+  }
+
+  // === Static Analysis (SpotBugs, Checkstyle, PMD, etc.) ===
+
+  /**
+   * Get list of supported static analysis tools
+   */
+  getSupportedStaticAnalysisTools(): StaticAnalysisTool[] {
+    return this.staticAnalysisAgent.getSupportedTools();
+  }
+
+  /**
+   * Check availability of all static analysis tools
+   */
+  async checkStaticAnalysisToolsAvailability(): Promise<Map<StaticAnalysisTool, ToolAvailability>> {
+    return this.staticAnalysisAgent.checkAllToolsAvailability();
+  }
+
+  /**
+   * Check availability of a specific static analysis tool
+   */
+  async checkStaticAnalysisToolAvailability(tool: StaticAnalysisTool): Promise<ToolAvailability> {
+    return this.staticAnalysisAgent.checkToolAvailability(tool);
+  }
+
+  /**
+   * Run static analysis with a specific tool
+   */
+  async runStaticAnalysisTool(
+    tool: StaticAnalysisTool,
+    options?: StaticAnalysisOptions,
+  ): Promise<StaticAnalysisResult> {
+    return this.staticAnalysisAgent.runTool(tool, options);
+  }
+
+  /**
+   * Run static analysis with all available tools
+   */
+  async runAllStaticAnalysisTools(options?: StaticAnalysisOptions): Promise<CombinedAnalysisResult> {
+    return this.staticAnalysisAgent.runAllTools(options);
+  }
+
+  /**
+   * Run static analysis with specific tools
+   */
+  async runStaticAnalysisTools(
+    tools: StaticAnalysisTool[],
+    options?: StaticAnalysisOptions,
+  ): Promise<CombinedAnalysisResult> {
+    return this.staticAnalysisAgent.runTools(tools, options);
+  }
+
+  /**
+   * Format static analysis result as human-readable report
+   */
+  formatStaticAnalysisReport(result: CombinedAnalysisResult | StaticAnalysisResult): string {
+    return this.staticAnalysisAgent.formatReport(result);
+  }
+
+  getStaticAnalysisAgent(): StaticAnalysisAgent {
+    return this.staticAnalysisAgent;
   }
 }

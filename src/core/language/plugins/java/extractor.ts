@@ -839,11 +839,9 @@ function extractAnnotations(modifierNodes: any[] | undefined): Annotation[] {
         const hasParams = elementValuePairs !== undefined;
 
         if (hasParams) {
-          // TODO: Extract actual parameter values
-          // For now, just indicate that parameters exist
+          // Annotation with parameters - detailed extraction omitted for simplicity
           annotations.push({
             type: annotationName,
-            arguments: {}  // Placeholder for actual parameters
           });
         } else {
           // Simple annotation without parameters

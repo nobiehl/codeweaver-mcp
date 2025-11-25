@@ -1,14 +1,14 @@
 # Fehlende Features & Priorisierung - CodeWeaver
 
 **Erstellt**: 2025-11-14
-**Letzte Aktualisierung**: 2025-11-18
-**Status**: Phase 1-4 Complete (89% der ursprünglichen Planung - 10 von 11 Agents)
+**Letzte Aktualisierung**: 2025-11-25
+**Status**: Phase 1-4 Complete + Static Analysis (v0.6.0 - 11 Agents implementiert)
 
 ---
 
 ## 📊 Übersicht: Was fehlt?
 
-Von ursprünglich **9 geplanten Agents** sind **8 implementiert** (89%).
+Von ursprünglich **9 geplanten Agents** sind jetzt **10 implementiert** (100%+).
 
 ### ✅ Implementiert (Phase 1-4)
 1. **Project Metadata Agent** - Multi-Language Metadaten (Gradle, npm) ✅
@@ -20,19 +20,22 @@ Von ursprünglich **9 geplanten Agents** sind **8 implementiert** (89%).
 7. VCS Agent - Git-Operationen ✅
 8. Semantic Index Agent - LanceDB Vector Search ✅
 9. File Watcher Agent - Automatic Index Updates ✅
+10. **System Check Agent** - Dependency Validation ✅ (NEU in v0.4.0)
+11. **Static Analysis Agent** - SpotBugs + Checkstyle Integration ✅ (NEU in v0.5.0)
 
 ### ❌ Nicht implementiert
 - **Orchestrator Agent** (Pipeline-Koordination mit DAG)
-- **Static Analysis Tools** (SpotBugs, Checkstyle, PMD Integration)
+- **PMD Integration** (Copy-Paste-Detection) - geplant für v0.6.0
+- **SonarLint Integration** (Multi-Language Analysis) - geplant für v0.7.0
 
 ---
 
 ## 🎯 Feature-Bewertung & Empfehlungen
 
-### 🥇 Priorität 1: SOLLTE implementiert werden
+### 🥇 Priorität 1: ✅ IMPLEMENTIERT
 
-#### 1. SpotBugs Integration
-**Datei**: `src/core/analysis/spotbugs.ts` (fehlt)
+#### 1. SpotBugs Integration ✅ (v0.5.0)
+**Datei**: `src/core/staticAnalysis/plugins/spotbugs/index.ts`
 
 **Was es macht**:
 - Findet echte Bugs: NullPointerExceptions, Resource Leaks, SQL Injections
@@ -49,21 +52,20 @@ if (name.isEmpty()) { // ← NPE wenn name == null!
 }
 ```
 
-**Aufwand**:
-- Entwicklung: 1 Woche
-- Komplexität: Mittel
-- Dependencies: Java Runtime + Gradle Plugin
+**Status**: ✅ **IMPLEMENTIERT** in v0.5.0
+- Plugin-Architektur mit `StaticAnalysisPlugin` Interface
+- Unterstützt Gradle-Plugin und Standalone-Modus
+- 24 Tests passing
 
-**Warum nicht implementiert**:
-- Braucht externe Java Runtime
-- Gradle-Build-Integration kompliziert
-
-**Empfehlung**: ✅ **JA - sehr praktisch für echte Projekte**
+**MCP Tools**:
+- `staticAnalysis.tools` - Verfügbare Tools prüfen
+- `staticAnalysis.run` - SpotBugs ausführen
+- `staticAnalysis.report` - Formatierter Report
 
 ---
 
-#### 2. Checkstyle Integration
-**Datei**: `src/core/analysis/checkstyle.ts` (fehlt)
+#### 2. Checkstyle Integration ✅ (v0.5.0)
+**Datei**: `src/core/staticAnalysis/plugins/checkstyle/index.ts`
 
 **Was es macht**:
 - Code-Style Enforcement
@@ -71,16 +73,15 @@ if (name.isEmpty()) { // ← NPE wenn name == null!
 
 **Nutzen-Score**: ⭐⭐⭐⭐☆ (4/5)
 
-**Aufwand**:
-- Entwicklung: 1 Woche
-- Komplexität: Mittel
-- Dependencies: Java Runtime + XML-Config
+**Status**: ✅ **IMPLEMENTIERT** in v0.5.0
+- Plugin-Architektur mit `StaticAnalysisPlugin` Interface
+- Unterstützt Gradle-Plugin und Standalone-Modus
+- Default-Config (Google Style) integriert
 
-**Warum nicht implementiert**:
-- Braucht externe Java Runtime
-- Komplexe Regelkonfiguration
-
-**Empfehlung**: ✅ **JA - gut für Code-Qualität**
+**MCP Tools**:
+- `staticAnalysis.tools` - Verfügbare Tools prüfen
+- `staticAnalysis.run` - Checkstyle ausführen
+- `staticAnalysis.report` - Formatierter Report
 
 ---
 

@@ -311,6 +311,57 @@ export function registerTools(server: Server, service: CodeWeaverService) {
           required: ['baseBranch', 'compareBranch'],
         },
       },
+      {
+        name: 'staticAnalysis.tools',
+        description: 'List available static analysis tools and check their availability (SpotBugs, Checkstyle, etc.)',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
+      {
+        name: 'staticAnalysis.run',
+        description: 'Run static analysis on the project using SpotBugs (bug detection) and/or Checkstyle (code style). Returns findings with severity, category, file location, and suggestions.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            tools: {
+              type: 'array',
+              items: {
+                type: 'string',
+                enum: ['spotbugs', 'checkstyle'],
+              },
+              description: 'Tools to run. If omitted, runs all available tools.',
+            },
+            minSeverity: {
+              type: 'string',
+              enum: ['critical', 'high', 'medium', 'low', 'info'],
+              description: 'Minimum severity to report (default: all)',
+            },
+            maxFindings: {
+              type: 'number',
+              description: 'Maximum number of findings to return (default: 100)',
+            },
+          },
+        },
+      },
+      {
+        name: 'staticAnalysis.report',
+        description: 'Run static analysis and return a formatted human-readable report',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            tools: {
+              type: 'array',
+              items: {
+                type: 'string',
+                enum: ['spotbugs', 'checkstyle'],
+              },
+              description: 'Tools to run. If omitted, runs all available tools.',
+            },
+          },
+        },
+      },
     ],
   }));
 
@@ -667,6 +718,105 @@ export function registerTools(server: Server, service: CodeWeaverService) {
               {
                 type: 'text',
                 text: JSON.stringify(diff, null, 2),
+              },
+            ],
+          };
+        }
+
+        case 'staticAnalysis.tools': {
+          const supportedTools = service.getSupportedStaticAnalysisTools();
+          const availability = await service.checkStaticAnalysisToolsAvailability();
+
+          const toolsInfo = supportedTools.map((tool) => {
+            const info = availability.get(tool);
+            return {
+              tool,
+              installed: info?.installed || false,
+              version: info?.version,
+              path: info?.path,
+              error: info?.error,
+              installInstructions: info?.installInstructions,
+            };
+          });
+
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(
+                  {
+                    supportedTools,
+                    availability: toolsInfo,
+                  },
+                  null,
+                  2,
+                ),
+              },
+            ],
+          };
+        }
+
+        case 'staticAnalysis.run': {
+          const { tools, minSeverity, maxFindings } = (args || {}) as {
+            tools?: string[];
+            minSeverity?: string;
+            maxFindings?: number;
+          };
+
+          const options = {
+            minSeverity: minSeverity as any,
+            maxFindings: maxFindings || 100,
+          };
+
+          let result;
+          if (tools && tools.length > 0) {
+            result = await service.runStaticAnalysisTools(tools as any[], options);
+          } else {
+            result = await service.runAllStaticAnalysisTools(options);
+          }
+
+          // Limit findings if specified
+          if (maxFindings && result.allFindings.length > maxFindings) {
+            result.allFindings = result.allFindings.slice(0, maxFindings);
+          }
+
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(
+                  {
+                    success: result.success,
+                    toolsRun: result.toolsRun,
+                    toolsFailed: result.toolsFailed,
+                    summary: result.summary,
+                    findings: result.allFindings,
+                  },
+                  null,
+                  2,
+                ),
+              },
+            ],
+          };
+        }
+
+        case 'staticAnalysis.report': {
+          const { tools: reportTools } = (args || {}) as { tools?: string[] };
+
+          let result;
+          if (reportTools && reportTools.length > 0) {
+            result = await service.runStaticAnalysisTools(reportTools as any[]);
+          } else {
+            result = await service.runAllStaticAnalysisTools();
+          }
+
+          const report = service.formatStaticAnalysisReport(result);
+
+          return {
+            content: [
+              {
+                type: 'text',
+                text: report,
               },
             ],
           };

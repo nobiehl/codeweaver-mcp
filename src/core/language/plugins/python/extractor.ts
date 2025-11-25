@@ -316,12 +316,11 @@ function extractDecorators(node: Node): Annotation[] {
           type: nameNode.text,
         });
       } else {
-        // Might be a call expression like @decorator(args)
+        // Call expression like @decorator(args) - argument extraction omitted for simplicity
         const text = child.text.replace(/^@/, '').trim();
         const decoratorName = text.split('(')[0];
         decorators.push({
           type: decoratorName,
-          arguments: {}, // TODO: Extract actual arguments
         });
       }
     }

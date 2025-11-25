@@ -3,9 +3,6 @@
  *
  * Multi-language project metadata extraction using plugin architecture.
  * Supports Gradle, npm, pip, Maven, and more through plugins.
- *
- * This agent replaces the language-specific DiscoveryAgent with a
- * unified, extensible approach.
  */
 
 import type {

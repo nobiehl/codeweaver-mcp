@@ -1,7 +1,7 @@
 {
   "name": "codeweaver-mcp",
-  "version": "0.4.0",
-  "description": "Token-efficient MCP server for multi-language code analysis (Java, TypeScript, JavaScript, Markdown, Python) with semantic search and system health checks",
+  "version": "0.6.0",
+  "description": "Token-efficient MCP server for multi-language code analysis (Java, TypeScript, JavaScript, Markdown, Python) with semantic search, system health checks, and static analysis (SpotBugs, Checkstyle)",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {

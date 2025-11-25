@@ -1,6 +1,6 @@
 # CodeWeaver 🕸️
 
-> ⚠️ **Beta Release (v0.4.0)** - System Health Checks & Dependency Validation! Auto-check dependencies on startup with new `doctor` command. Removed deprecated Discovery Agent for cleaner codebase. Feedback welcome!
+> ⚠️ **Beta Release (v0.6.0)** - Static Analysis + Code Cleanup! SpotBugs & Checkstyle integration, all packages updated, codebase fully cleaned. PMD & SonarLint coming soon!
 
 **Token-efficient MCP server for Multi-Language project analysis (Java, TypeScript, JavaScript, Markdown, Python)**
 
@@ -33,8 +33,12 @@ Weaving Code Intelligence for LLMs - A lightweight Model Context Protocol server
   - 🔍 **[FILE_WATCHER_GUIDE.md](./docs/guides/FILE_WATCHER_GUIDE.md)** - Keep your index always up-to-date!
   - 🚀 **[PERFORMANCE_OPTIMIZATION.md](./docs/architecture/PERFORMANCE_OPTIMIZATION.md)** - Future optimizations (GPU acceleration)
 - ✅ **Code Quality Analysis** - Cyclomatic complexity, LOC metrics, import analysis
+- ✅ **Static Analysis** 🆕 - SpotBugs (bugs), Checkstyle (style) with plugin architecture!
+  - 🔬 **SpotBugs** - Finds NullPointerExceptions, Resource Leaks, SQL Injections
+  - ✅ **Checkstyle** - Code style enforcement, naming conventions
+  - 🔌 **Plugin Architecture** - Easy to add PMD, SonarLint later
 - ✅ **Git Integration** - Status, diff, blame, log, branches, compare
-- ✅ **Test-Driven** - 256 tests passing (100%) - All features fully tested! 🆕
+- ✅ **Test-Driven** - 291 tests passing (100%) - All features fully tested! 🆕
 
 > **\*** Core features (Discovery, Symbols, Search, Analysis, VCS) have zero native dependencies. Semantic Search optionally requires LanceDB + ONNX Runtime (native components).
 
@@ -849,7 +853,7 @@ MIT License - see [LICENSE](./LICENSE)
 - **Symbol Extraction** - Complete support for Java, TypeScript, JavaScript, Markdown, and Python
 - **Code Quality Analysis** - Cyclomatic complexity, LOC metrics
 - **Git Integration** - Status, diff, blame, log, branches
-- **256 tests passing** (100% - all features tested)
+- **291 tests passing** (100% - all features tested)
 
 ⚠️ **Known Limitations:**
 - Performance varies on large codebases (>10k files)

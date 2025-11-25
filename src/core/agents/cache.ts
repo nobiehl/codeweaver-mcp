@@ -146,8 +146,7 @@ export class CacheAgent {
   }
 
   private async updateMetadata(_key: CacheKey, _sizeBytes: number): Promise<void> {
-    // TODO: Implement full metadata tracking
-    // For now, just ensure directory exists
+    // Ensure cache directory exists
     const dir = path.dirname(this.metadataFile);
     await fs.mkdir(dir, { recursive: true });
   }

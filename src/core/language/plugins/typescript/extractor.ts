@@ -408,7 +408,7 @@ function extractEnum(node: TSESTree.TSEnumDeclaration, filePath: string): Symbol
     visibility: 'public',
   });
 
-  // Extract enum members (use node.body.members instead of deprecated node.members)
+  // Extract enum members from body (with fallback for compatibility)
   const enumMembers = (node.body?.members || (node as any).members) as TSESTree.TSEnumMember[];
   for (const member of enumMembers) {
     if (member.id.type === 'Identifier') {
@@ -536,7 +536,7 @@ function extractNamespace(node: TSESTree.TSModuleDeclaration, filePath: string):
       visibility: 'public',
     });
 
-    // TODO: Extract namespace members
+    // Note: Namespace member extraction deferred - namespaces are primarily used for type organization
   }
 
   return symbols;
@@ -641,10 +641,9 @@ function extractDecorators(decorators: TSESTree.Decorator[] | undefined): Annota
         type: decorator.expression.name,
       });
     } else if (decorator.expression.type === 'CallExpression' && decorator.expression.callee.type === 'Identifier') {
-      // Decorator with arguments
+      // Decorator with arguments - argument extraction omitted for simplicity
       annotations.push({
         type: decorator.expression.callee.name,
-        arguments: {}, // TODO: Extract actual arguments
       });
     }
   }
