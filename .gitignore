@@ -45,6 +45,9 @@ test-results/
 .env.local
 .env.*.local
 
+# MCP Config (user-specific paths)
+.mcp.json
+
 # Temporary files
 tmp/
 temp/
