@@ -43,7 +43,7 @@ jobs:
         run: |
           VERSION="${{ steps.get_version.outputs.VERSION }}"
           # Extract section from CHANGELOG.md for this version
-          sed -n "/## \[${VERSION}\]/,/## \[/p" CHANGELOG.md | sed '$d' > release_notes.md
+          sed -n "/## \[${VERSION}\]/,/## \[/p" docs/project/CHANGELOG.md | sed '$d' > release_notes.md
           echo "NOTES<<EOF" >> $GITHUB_OUTPUT
           cat release_notes.md >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -62,4 +62,4 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
           npm publish
         continue-on-error: true
-        if: secrets.NPM_TOKEN != ''
+        if: ${{ secrets.NPM_TOKEN != '' }}
