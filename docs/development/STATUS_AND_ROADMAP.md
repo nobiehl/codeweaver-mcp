@@ -21,11 +21,11 @@ Von ursprünglich **9 geplanten Agents** sind jetzt **10 implementiert** (100%+)
 8. Semantic Index Agent - LanceDB Vector Search ✅
 9. File Watcher Agent - Automatic Index Updates ✅
 10. **System Check Agent** - Dependency Validation ✅ (NEU in v0.4.0)
-11. **Static Analysis Agent** - SpotBugs + Checkstyle Integration ✅ (NEU in v0.5.0)
+11. **Static Analysis Agent** - SpotBugs + Checkstyle Integration ✅ (NEU in v0.6.0)
 
 ### ❌ Nicht implementiert
 - **Orchestrator Agent** (Pipeline-Koordination mit DAG)
-- **PMD Integration** (Copy-Paste-Detection) - geplant für v0.6.0
+- **PMD Integration** (Copy-Paste-Detection) - geplant für v0.7.0
 - **SonarLint Integration** (Multi-Language Analysis) - geplant für v0.7.0
 
 ---
@@ -34,7 +34,7 @@ Von ursprünglich **9 geplanten Agents** sind jetzt **10 implementiert** (100%+)
 
 ### 🥇 Priorität 1: ✅ IMPLEMENTIERT
 
-#### 1. SpotBugs Integration ✅ (v0.5.0)
+#### 1. SpotBugs Integration ✅ (v0.6.0)
 **Datei**: `src/core/staticAnalysis/plugins/spotbugs/index.ts`
 
 **Was es macht**:
@@ -52,7 +52,7 @@ if (name.isEmpty()) { // ← NPE wenn name == null!
 }
 ```
 
-**Status**: ✅ **IMPLEMENTIERT** in v0.5.0
+**Status**: ✅ **IMPLEMENTIERT** in v0.6.0
 - Plugin-Architektur mit `StaticAnalysisPlugin` Interface
 - Unterstützt Gradle-Plugin und Standalone-Modus
 - 24 Tests passing
@@ -64,7 +64,7 @@ if (name.isEmpty()) { // ← NPE wenn name == null!
 
 ---
 
-#### 2. Checkstyle Integration ✅ (v0.5.0)
+#### 2. Checkstyle Integration ✅ (v0.6.0)
 **Datei**: `src/core/staticAnalysis/plugins/checkstyle/index.ts`
 
 **Was es macht**:
@@ -73,7 +73,7 @@ if (name.isEmpty()) { // ← NPE wenn name == null!
 
 **Nutzen-Score**: ⭐⭐⭐⭐☆ (4/5)
 
-**Status**: ✅ **IMPLEMENTIERT** in v0.5.0
+**Status**: ✅ **IMPLEMENTIERT** in v0.6.0
 - Plugin-Architektur mit `StaticAnalysisPlugin` Interface
 - Unterstützt Gradle-Plugin und Standalone-Modus
 - Default-Config (Google Style) integriert
